@@ -1,0 +1,11 @@
+<p>pag2test works!</p>
+<div>
+  <li *ngFor="let todo of todos21; let i=index">
+    <strong>{{i+1}}</strong>
+    <span [class.done]="todo.chek">
+      <input type="checkbox" [checked]="todo.chek" (change)="onChange(todo.id)"/>
+      {{todo.name}}
+      <a title="users" [routerLink]="['/users',  ]"></a>
+    </span>
+    <button class="rm">&times;</button>
+</div>

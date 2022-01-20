@@ -1,0 +1,10 @@
+﻿
+
+<div>
+    @using (Html.BeginForm("Index", "Home"))
+    {
+        <label>Введите пароль</label>
+        @Html.Password("password", "123");
+        <input type="submit" value="Войти" />
+    }
+</div>

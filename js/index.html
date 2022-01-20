@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test JS</title>
+	<link rel="stylesheet" type="text/css" href="">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="utf-8">
+</head>
+<body>
+    <form name="user"> 
+        <input type="text" name="name">
+        <input type="number" name="age">
+        <input type="button" name="action" value="Создать" id="sub">
+	</form>
+	<script type="text/javascript" src="js/test.js"></script>
+
+
+	<script type="text/javascript"> 
+		"use strict"
+	let user = new Object()
+	user = {
+		name : "admin"
+	};
+	alert(user.name)
+	let hidden = Symbol('hid');
+	user["hid"] = "hiddening";
+	let p = Symbol.for('hid');
+	alert(p)
+	
+</script>
+<script type="text/javascript"> 
+	"use strict"
+	var array = [1,2,3,4,5,"Alan"];
+	function getArray(array)
+	{
+		var ar = [];
+	ar = array.join("-");
+		document.write(ar);
+		ar.concat(4);
+				document.write(ar);
+
+	}
+	$(document).ready(getArray(array));
+	
+	</script>
+<script type="text/javascript">
+</script>
+
+
+</body>
+</html>

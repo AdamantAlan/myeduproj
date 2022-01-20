@@ -1,0 +1,18 @@
+[08.03.2021 3:06:01] GetRubinAsync ERROR: './/h1[@class='mb-10' itempror='name']' has an invalid token.
+
+[08.03.2021 3:06:17] GetRubinAsync ERROR: './/h1[@class='mb-10' itempror='name']' has an invalid token.
+
+[08.03.2021 3:07:24] GetRubinAsync ERROR: './/h1[@class='mb-10' itempror='name']' has an invalid token.
+
+[10.03.2021 21:17:07] STUBDeserializeOfFileAsync ERROR: '"' is invalid after a single JSON value. Expected end of data. Path: $ | LineNumber: 0 | BytePositionInLine: 20.
+
+[12.03.2021 0:12:53] DeserializeOfFileAsync ERROR: Deserialization of interface types is not supported. Type 'AdelMobileBackEnd.models.IBook'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.
+
+[12.03.2021 0:13:10] DeserializeOfFileAsync ERROR: Deserialization of interface types is not supported. Type 'AdelMobileBackEnd.models.IBook'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.
+
+[12.03.2021 0:13:12] DeserializeOfFileAsync ERROR: Deserialization of interface types is not supported. Type 'AdelMobileBackEnd.models.IBook'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.
+
+[12.03.2021 0:16:26] DeserializeOfFileAsync ERROR: Deserialization of types without a parameterless constructor, a singular parameterized constructor, or a parameterized constructor annotated with 'JsonConstructorAttribute' is not supported. Type 'AdelMobileBackEnd.models.absFactoryOfBook.products.absBook'. Path: $ | LineNumber: 0 | BytePositionInLine: 1.
+
+[13.03.2021 0:51:17] GetRubinAsync ERROR: Object reference not set to an instance of an object.
+

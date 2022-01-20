@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter", "Converter\Converter.csproj", "{39B1776B-CC96-4618-989A-9EE2309E3F4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConverterTest", "ConverterTest\ConverterTest.csproj", "{2C225152-EB32-4AED-B13C-C02636038768}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39B1776B-CC96-4618-989A-9EE2309E3F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39B1776B-CC96-4618-989A-9EE2309E3F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39B1776B-CC96-4618-989A-9EE2309E3F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39B1776B-CC96-4618-989A-9EE2309E3F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C225152-EB32-4AED-B13C-C02636038768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C225152-EB32-4AED-B13C-C02636038768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C225152-EB32-4AED-B13C-C02636038768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C225152-EB32-4AED-B13C-C02636038768}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

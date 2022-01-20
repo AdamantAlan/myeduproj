@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@*<div>
+    @using (Ajax.BeginForm("BookSearch", new AjaxOptions { UpdateTargetId = "results" }))
+    {
+        <input type="text" name="name" />
+        <input type="submit" value="Поиск" />
+    }
+    <div id="results"></div>
+</div>
+@Scripts.Render("~/bundles/jquery")*@
+
+
+<div>
+    @using (Ajax.BeginForm("BookSearch", new AjaxOptions {UpdateTargetId ="result", LoadingElementId="load", LoadingElementDuration=1000, InsertionMode= InsertionMode.Replace}))
+    {
+        @Html.Label("ajaxdata","data")
+        @Html.TextBox("name","")
+        <input type="submit" value="sub">
+    }
+<div >
+    <p id="load" style="display:none;" >Загрузка</p></div>
+<div id="result"></div>
+</div>
+
+<div>
+    @Ajax.ActionLink("Лучшая книга", "BestBook", new AjaxOptions { UpdateTargetId = "res", LoadingElementId = "load", LoadingElementDuration = 1000 })
+    <p id="res"></p>
+</div>

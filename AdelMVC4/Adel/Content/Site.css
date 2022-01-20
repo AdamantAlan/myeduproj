@@ -1,0 +1,96 @@
+﻿ body {
+  
+  
+}
+   
+
+/*  background-image: url("fon.jpg");
+/* Set padding to keep content from hitting the edges 
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default 
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+*/
+
+.welcome {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.welcome h1 {
+        font-weight: normal;
+        font-family: 'Merriweather', serif;
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        line-height: 1;
+        color: wheat;
+        font-size: 40px;
+        padding: .4em 1em .55em;
+    }
+
+.welcome h1:before,
+.welcome h1:after {
+            content: "";
+            position: absolute;
+            width: 60%;
+            height: .1em;
+            background: #294200;
+        }
+
+.welcome h1:before {
+            left: 0;
+            top: 0;
+        }
+
+.welcome h1:after {
+            right: 0;
+            bottom: 0;
+        }
+
+.welcome h1 span:before,
+.welcome h1 span:after {
+            content: "";
+            position: absolute;
+            width: .65em;
+            height: .65em;
+            border: 0.1em solid #294200;
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+
+.welcome h1 span:before {
+            top: -.55em;
+            left: -.325em;
+        }
+
+.welcome h1 span:after {
+            bottom: -.55em;
+            right: -.325em;
+        }
+
+@media (max-width: 600px) {
+    .welcome h1 {
+        font-size: 2em;
+    }
+}
+
+@media (max-width: 450px) {
+    .welcome h1 {
+        font-size: 1.5em;
+    }
+}

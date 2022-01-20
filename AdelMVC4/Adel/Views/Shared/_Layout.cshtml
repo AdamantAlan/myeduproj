@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-language" content="ru">
+    <meta http-equiv="content-type" content="text/html; charset=windows-1251">
+    <meta name="robots" content="all">
+    <meta name="keywords" content="Адель, Адель Кауф, Рубин, рубин книга, хоррор, фанфик, Адель Кауф рубин">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Адель Кауф">
+    <meta name="copyright" content="Все права принадлежат Адель Кауф">
+    <meta name="description" content="Адель Кауф выкладывает в сеть новые главы хоррор-книги Рубин! Успейте узнать продолжение потрясающей саги!">
+    <title>@ViewBag.Title</title>
+    <link rel="shortcut icon" href="~/Content/rubinfon.png" type="image/x-icon">
+
+
+    @Styles.Render("~/Content/masterStyle")
+</head>
+<body>
+        @RenderSection("roof")
+        @RenderSection("slides", required: false)
+        @RenderSection("footer")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/mainIndex")
+
+</body>
+</html>

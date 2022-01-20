@@ -1,0 +1,24 @@
+﻿@{
+        ViewBag.Title = "Home Page";
+        AjaxOptions op = new AjaxOptions()
+        {
+            UpdateTargetId = "Info",
+            Url = Url.Action("IndexAj","Home")
+    };
+
+}
+
+<div>
+    @using (Ajax.BeginForm(op))
+    {
+        <p id="info">@Html.Action("IndexAj", new { id = Model })</p>
+        <label>Message</label> @Html.TextBox("mes2", "123")
+
+        <label>Submit</label> <input type="submit" value="submit" />
+
+    }
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    }
