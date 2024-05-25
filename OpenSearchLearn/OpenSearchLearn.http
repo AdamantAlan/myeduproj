@@ -1,0 +1,6 @@
+@OpenSearchLearn_HostAddress = http://localhost:5014
+
+GET {{OpenSearchLearn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

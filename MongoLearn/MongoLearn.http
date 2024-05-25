@@ -1,0 +1,6 @@
+@MongoLearn_HostAddress = http://localhost:5108
+
+GET {{MongoLearn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,23 @@
+version: '3'
+services:
+  opensearch:
+    image: opensearchproject/opensearch
+    container_name: opensearch
+    environment:
+      - cluster.name=my-cluster
+      - discovery.type=single-node
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword#$%dsf_asdf0
+    ports:
+      - "9200:9200"
+
+  opensearch-dashboard:
+    image: opensearchproject/opensearch-dashboards
+    container_name: opensearch-dashboard
+    environment:
+      - OPENSEARCH_HOSTS=https://opensearch:9200
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword#$%dsf_asdf0
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - "5601:5601"
+    depends_on:
+      - opensearch
