@@ -1,6 +1,4 @@
-using System.Net;
 using OpenSearch.Client;
-using OpenSearch.Net;
 
 namespace OpenSearchLearn;
 
