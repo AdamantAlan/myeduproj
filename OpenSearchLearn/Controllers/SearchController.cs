@@ -40,6 +40,31 @@ public class SearchController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> ForStringFuzzing(string desc)
+    {
+        try
+        {
+            var result = await _searchClient.SearchAsync<Store>(s => s
+                .Index(_index)
+                .Query(q => q
+                    .Fuzzy(f => f
+                        .Field(fl => fl.Description)
+                        .Value(desc)
+                        .Fuzziness(Fuzziness.Auto)
+                        .MaxExpansions(3)))
+            );
+
+            if (!result.IsValid)
+                throw new Exception("Getting documents has errors");
+            return Ok(result.Documents);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 
     [HttpGet]
     public async Task<IActionResult> GreaterOrEqualNumber(double count)
