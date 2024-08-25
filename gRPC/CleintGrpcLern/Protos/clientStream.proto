@@ -1,0 +1,15 @@
+syntax = "proto3";
+option csharp_namespace = "CleintGrpcLern.ClientStream";
+package clientStream;
+
+message Request{
+  string content = 1;
+}
+
+message Response{
+  string content = 1;
+}
+
+service MessengerClient{
+  rpc ClientDataStream (stream Request) returns (Response);
+}

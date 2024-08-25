@@ -9,6 +9,9 @@
     <ItemGroup>
         <Protobuf Include="Protos\greet.proto" GrpcServices="Server"/>
         <Protobuf Include="Protos\localrpc.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\measure.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\serverStream.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\clientStream.proto" GrpcServices="Server"/>
     </ItemGroup>
 
     <ItemGroup>

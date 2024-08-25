@@ -10,9 +10,10 @@ service LocalRpc {
   rpc GetLocalSignal (Request) returns (Response);
 }
 
+import "google/protobuf/wrappers.proto";
 // The request message containing the user's name.
 message Request {
-  int32 Signal = 1;
+  google.protobuf.Int32Value Signal = 1;
   string Desc = 2;
 }
 

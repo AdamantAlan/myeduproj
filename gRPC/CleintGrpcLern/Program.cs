@@ -1,4 +1,8 @@
-﻿using Grpc.Net.Client;
+﻿using CleintGrpcLern.ClientStream;
+using CleintGrpcLern.Measure;
+using CleintGrpcLern.ServerStream;
+using Grpc.Core;
+using Grpc.Net.Client;
 
 namespace CleintGrpcLern;
 
@@ -31,12 +35,55 @@ class Program
                 var desc = Console.ReadLine();
                 var reply = await client.GetLocalSignalAsync(new Request()
                 {
-                    Signal = int.Parse(signal), 
+                    Signal = int.Parse(signal),
                     Desc = desc
                 });
-                var result = reply.OutMessage is null ? reply.ErrorId.ToString() : reply.OutMessage;
+                var result = reply.ErrorId == 500 ? "Error" + reply.ErrorId : reply.OutMessage;
                 Console.WriteLine($"Ответ сервера: {result}");
-            }   
+            }
+
+            if (chanellNumber == "3")
+            {
+                var client = new MeasureManager.MeasureManagerClient(channel);
+                Console.Write("Введите имя: ");
+                var name = Console.ReadLine();
+                var reply = await client.InviteAsync(new CreateMeasureWriteDto
+                {
+                    Name = name
+                });
+                var eventInvitation = reply.Invitation;
+                var eventDateTime = reply.Start.ToDateTime();
+                var eventDuration = reply.Duration.ToTimeSpan();
+                Console.WriteLine(eventInvitation);
+                Console.WriteLine($"Начало: {eventDateTime.ToString("dd.MM HH:mm")}   Длительность: {eventDuration.TotalHours} часа");
+            }
+            
+            if (chanellNumber == "4")
+            {
+                var client = new Messenger.MessengerClient(channel);
+                using var reply = client.ServerDataStream(new ServerStream.Request());
+                var stream = reply.ResponseStream;
+                
+                await foreach (var r in stream.ReadAllAsync())
+                {
+                    Console.WriteLine(r.Content);
+                }
+            }
+            
+            if (chanellNumber == "5")
+            {
+                string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
+                var client = new MessengerClient.MessengerClientClient(channel);
+                using var call = client.ClientDataStream();
+                foreach (var m in messages)
+                {
+                    await call.RequestStream.WriteAsync(new ClientStream.Request() {Content = m});
+                }
+
+                await call.RequestStream.CompleteAsync();
+                var response = await call.ResponseAsync;
+                Console.WriteLine($"Ответ сервера: {response.Content}");
+            }
         }
     }
 }

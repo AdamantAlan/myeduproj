@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-
 namespace GrpcLearn.Services;
 
 public class LocalRpcService : LocalRpc.LocalRpcBase
@@ -13,8 +12,8 @@ public class LocalRpcService : LocalRpc.LocalRpcBase
     {
         try
         {
-            if (request.Signal == -1)
-                throw new Exception("Exception 1");
+            if (request.Signal is null)
+                throw new Exception("Signal is null!");
             return Task.FromResult(new Response() { OutMessage = request.GetHashCode().ToString(), ErrorId = 0});
         }
         catch (Exception e)

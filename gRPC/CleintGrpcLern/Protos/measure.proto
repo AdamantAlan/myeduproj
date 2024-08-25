@@ -1,0 +1,21 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+package measureRpc;
+option csharp_namespace = "CleintGrpcLern.Measure";
+
+service MeasureManager {
+
+  rpc Invite (CreateMeasureWriteDto) returns (CreateMeasureReadDto);
+}
+
+message CreateMeasureWriteDto {
+  string name = 2;
+}
+
+message CreateMeasureReadDto {
+  string invitation = 1;
+  google.protobuf.Timestamp start = 2;
+  google.protobuf.Duration duration = 3;
+}
