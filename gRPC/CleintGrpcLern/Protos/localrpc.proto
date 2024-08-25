@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "CleintGrpcLern";
+
+package localRpc;
+
+// The greeting service definition.
+service LocalRpc {
+  // Sends a greeting
+  rpc GetLocalSignal (Request) returns (Response);
+}
+
+// The request message containing the user's name.
+message Request {
+  int32 Signal = 1;
+  string Desc = 2;
+}
+
+// The response message containing the greetings.
+message Response {
+  string OutMessage = 1;
+  int32 ErrorId = 2;
+}
