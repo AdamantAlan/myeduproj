@@ -1,0 +1,13 @@
+syntax = "proto3";
+option csharp_namespace = "GrpcLearn.HeaderRpc";
+package metanit;
+
+message Request{}
+
+message Response{
+  string content=1;
+}
+
+service Messenger{
+  rpc SendMessage (Request) returns (Response);
+}

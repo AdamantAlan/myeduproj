@@ -55,21 +55,22 @@ class Program
                 var eventDateTime = reply.Start.ToDateTime();
                 var eventDuration = reply.Duration.ToTimeSpan();
                 Console.WriteLine(eventInvitation);
-                Console.WriteLine($"Начало: {eventDateTime.ToString("dd.MM HH:mm")}   Длительность: {eventDuration.TotalHours} часа");
+                Console.WriteLine(
+                    $"Начало: {eventDateTime.ToString("dd.MM HH:mm")}   Длительность: {eventDuration.TotalHours} часа");
             }
-            
+
             if (chanellNumber == "4")
             {
                 var client = new Messenger.MessengerClient(channel);
                 using var reply = client.ServerDataStream(new ServerStream.Request());
                 var stream = reply.ResponseStream;
-                
+
                 await foreach (var r in stream.ReadAllAsync())
                 {
                     Console.WriteLine(r.Content);
                 }
             }
-            
+
             if (chanellNumber == "5")
             {
                 string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
@@ -77,14 +78,14 @@ class Program
                 using var call = client.ClientDataStream();
                 foreach (var m in messages)
                 {
-                    await call.RequestStream.WriteAsync(new ClientStream.Request() {Content = m});
+                    await call.RequestStream.WriteAsync(new ClientStream.Request() { Content = m });
                 }
 
                 await call.RequestStream.CompleteAsync();
                 var response = await call.ResponseAsync;
                 Console.WriteLine($"Ответ сервера: {response.Content}");
             }
-            
+
             if (chanellNumber == "6")
             {
                 string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
@@ -97,14 +98,32 @@ class Program
                         Console.WriteLine($"Server: {r.Content}");
                     }
                 });
-                
+
                 foreach (var m in messages)
                 {
-                    await call.RequestStream.WriteAsync(new DuplexStream.Request() {Content = m});
+                    await call.RequestStream.WriteAsync(new DuplexStream.Request() { Content = m });
                     Console.WriteLine(m);
                 }
 
                 await Task.WhenAll(call.RequestStream.CompleteAsync(), reading);
+            }
+
+            if (chanellNumber == "7")
+            {
+                var client = new HeaderRpc.Messenger.MessengerClient(channel);
+                var customHeaders = new Metadata();
+                customHeaders.Add("username", "Dmitry");
+                customHeaders.Add("token", "very long jwt token");
+                using var call = client.SendMessageAsync(new HeaderRpc.Request(), customHeaders);
+                
+                var response = await call;
+                Console.WriteLine($"Response: {response.Content}");
+                
+                var headers = await call.ResponseHeadersAsync;
+                foreach (var h in headers)
+                {
+                    Console.WriteLine($"{h.Key}: {h.Value}");
+                }
             }
         }
     }

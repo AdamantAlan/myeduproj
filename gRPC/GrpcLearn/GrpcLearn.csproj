@@ -13,6 +13,7 @@
         <Protobuf Include="Protos\serverStream.proto" GrpcServices="Server"/>
         <Protobuf Include="Protos\clientStream.proto" GrpcServices="Server"/>
         <Protobuf Include="Protos\duplexStream.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\headerRpc.proto" GrpcServices="Server"/>
     </ItemGroup>
 
     <ItemGroup>
