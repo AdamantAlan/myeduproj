@@ -1,0 +1,15 @@
+syntax = "proto3";
+option csharp_namespace = "CleintGrpcLern.DuplexStream";
+package duplexStream;
+
+message Request{
+  string content = 1;
+}
+
+message Response{
+  string content=1;
+}
+
+service Messenger{
+  rpc DataStream (stream Request) returns (stream Response);
+}

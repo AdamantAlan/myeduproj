@@ -84,6 +84,28 @@ class Program
                 var response = await call.ResponseAsync;
                 Console.WriteLine($"Ответ сервера: {response.Content}");
             }
+            
+            if (chanellNumber == "6")
+            {
+                string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
+                var client = new DuplexStream.Messenger.MessengerClient(channel);
+                using var call = client.DataStream();
+                var reading = Task.Run(async () =>
+                {
+                    await foreach (var r in call.ResponseStream.ReadAllAsync())
+                    {
+                        Console.WriteLine($"Server: {r.Content}");
+                    }
+                });
+                
+                foreach (var m in messages)
+                {
+                    await call.RequestStream.WriteAsync(new DuplexStream.Request() {Content = m});
+                    Console.WriteLine(m);
+                }
+
+                await Task.WhenAll(call.RequestStream.CompleteAsync(), reading);
+            }
         }
     }
 }
