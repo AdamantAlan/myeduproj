@@ -1,6 +1,9 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
+
 namespace GrpcLearn.Services;
 
+[Authorize]
 public class LocalRpcService : LocalRpc.LocalRpcBase
 {
     public LocalRpcService()

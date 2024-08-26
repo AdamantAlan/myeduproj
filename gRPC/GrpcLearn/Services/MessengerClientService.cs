@@ -1,8 +1,10 @@
 ﻿using Grpc.Core;
 using GrpcLearn.ClientStream;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GrpcLearn.Services;
 
+[Authorize]
 public class MessengerClientService : MessengerClient.MessengerClientBase
 {
     public override async Task<ClientStream.Response> ClientDataStream(IAsyncStreamReader<ClientStream.Request> requestStream,

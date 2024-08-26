@@ -1,7 +1,9 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GrpcLearn.Services;
 
+[Authorize]
 public class MessengerDuplexStreamService : DuplexStream.Messenger.MessengerBase
 {
     string[] messages = { "Привет", "Норм", "...", "Нет", "пока" };

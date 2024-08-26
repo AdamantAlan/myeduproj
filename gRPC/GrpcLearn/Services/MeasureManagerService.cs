@@ -1,8 +1,11 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using GrpcLearn.Measure;
+using Microsoft.AspNetCore.Authorization;
+
 namespace GrpcLearn.Services;
 
+[Authorize]
 public class MeasureManagerService : MeasureManager.MeasureManagerBase
 {
     public override Task<CreateMeasureReadDto> Invite(CreateMeasureWriteDto dto, ServerCallContext context)
