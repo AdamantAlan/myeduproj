@@ -62,26 +62,35 @@ class Program
             if (chanellNumber == "4")
             {
                 var client = new Messenger.MessengerClient(channel);
-                using var reply = client.ServerDataStream(new ServerStream.Request());
+                var customHeaders = new Metadata();
+                customHeaders.Add("username", "Dmitry");
+                customHeaders.Add("token", "very long jwt token");
+                using var reply = client.ServerDataStream(new ServerStream.Request(), customHeaders);
                 var stream = reply.ResponseStream;
 
                 await foreach (var r in stream.ReadAllAsync())
                 {
                     Console.WriteLine(r.Content);
                 }
+
+                var headers = await reply.ResponseHeadersAsync;
             }
 
             if (chanellNumber == "5")
             {
                 string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
                 var client = new MessengerClient.MessengerClientClient(channel);
-                using var call = client.ClientDataStream();
+                var customHeaders = new Metadata();
+                customHeaders.Add("username", "Dmitry");
+                customHeaders.Add("token", "very long jwt token");
+                using var call = client.ClientDataStream(headers: customHeaders);
                 foreach (var m in messages)
                 {
                     await call.RequestStream.WriteAsync(new ClientStream.Request() { Content = m });
                 }
 
                 await call.RequestStream.CompleteAsync();
+                
                 var response = await call.ResponseAsync;
                 Console.WriteLine($"Ответ сервера: {response.Content}");
             }
@@ -90,7 +99,10 @@ class Program
             {
                 string[] messages = { "Привет", "Как дела?", "Че молчишь?", "Ты че, спишь?", "Ну пока" };
                 var client = new DuplexStream.Messenger.MessengerClient(channel);
-                using var call = client.DataStream();
+                var customHeaders = new Metadata();
+                customHeaders.Add("username", "Dmitry");
+                customHeaders.Add("token", "very long jwt token");
+                using var call = client.DataStream(headers: customHeaders);
                 var reading = Task.Run(async () =>
                 {
                     await foreach (var r in call.ResponseStream.ReadAllAsync())
