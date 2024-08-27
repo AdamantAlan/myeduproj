@@ -1,0 +1,6 @@
+@CamundaLearn_HostAddress = http://localhost:5116
+
+GET {{CamundaLearn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
