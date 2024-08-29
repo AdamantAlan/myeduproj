@@ -39,10 +39,10 @@ public class CamundaController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult> StartProcess(string processDefinitionKey, string businessKey)
+    public async Task<ActionResult> StartProcess(string processDefinitionKey, string businessKey, string key, string value)
     {
         var deploymentResponse = await _client.StartProcessInstanceAsync(processDefinitionKey, businessKey,
-            null);
+            new Dictionary<string, VariableValue>() {[key] = new VariableValue(){Type = "string", Value = value}});
         return Ok(deploymentResponse);
     }
 }

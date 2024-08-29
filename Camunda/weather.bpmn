@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0qwe2jm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.26.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:process id="Process_14nzdb2" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent" name="Указать город">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="CityName" label="Название города" type="string" defaultValue="Moscow,ru" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0fc048p</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="getWeather" name="Получить данные о погоде">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">http://api.openweathermap.org/data/2.5/weather?q=${CityName}&amp;appid=8a1c6703023c2366117dbba551cf9ed7</camunda:inputParameter>
+            <camunda:outputParameter name="statusCode">
+              <camunda:script scriptFormat="JavaScript">statusCode;</camunda:script>
+            </camunda:outputParameter>
+            <camunda:outputParameter name="response">
+              <camunda:script scriptFormat="JavaScript">S(response);</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fc048p</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hqcj2n</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fc048p" sourceRef="StartEvent" targetRef="getWeather" />
+    <bpmn:exclusiveGateway id="Gateway_0erodnk" name="Что надеть ?">
+      <bpmn:incoming>Flow_0hqcj2n</bpmn:incoming>
+      <bpmn:outgoing>Flow_09fmq0h</bpmn:outgoing>
+      <bpmn:outgoing>Flow_05lj2qu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0hqcj2n" sourceRef="getWeather" targetRef="Gateway_0erodnk" />
+    <bpmn:sequenceFlow id="Flow_09fmq0h" name="&#62; -10" sourceRef="Gateway_0erodnk" targetRef="Activity_0f3lekf">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${response.prop("main").prop("temp").numberValue() - 273.15 &gt; 10}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_05lj2qu" name="&#60;= -10" sourceRef="Gateway_0erodnk" targetRef="Activity_1jcdv8r">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${response.prop("main").prop("temp").numberValue() - 273.15 &lt;= 10}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent" name="Конец">
+      <bpmn:incoming>Flow_1g5a4ax</bpmn:incoming>
+      <bpmn:incoming>Flow_155m0eq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1g5a4ax" sourceRef="Activity_1jcdv8r" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="Flow_155m0eq" sourceRef="Activity_0f3lekf" targetRef="EndEvent" />
+    <bpmn:userTask id="Activity_0f3lekf" name="Надеть куртку">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="temp" label="Температура" type="string" defaultValue="${response.prop(&#34;main&#34;).prop(&#34;temp&#34;).numberValue() - 273.15}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09fmq0h</bpmn:incoming>
+      <bpmn:outgoing>Flow_155m0eq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1jcdv8r" name="Надеть шубу">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="temp" label="Температура" type="string" defaultValue="${response.prop(&#34;main&#34;).prop(&#34;temp&#34;).numberValue() - 273.15}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05lj2qu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1g5a4ax</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_14nzdb2">
+      <bpmndi:BPMNShape id="Activity_0ckbylr_di" bpmnElement="getWeather">
+        <dc:Bounds x="280" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
+        <dc:Bounds x="179" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="275" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0erodnk_di" bpmnElement="Gateway_0erodnk" isMarkerVisible="true">
+        <dc:Bounds x="445" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517" y="240" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tqf2o5_di" bpmnElement="EndEvent">
+        <dc:Bounds x="742" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="744" y="255" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16ybu62_di" bpmnElement="Activity_0f3lekf">
+        <dc:Bounds x="540" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jy835l_di" bpmnElement="Activity_1jcdv8r">
+        <dc:Bounds x="540" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0fc048p_di" bpmnElement="Flow_0fc048p">
+        <di:waypoint x="215" y="250" />
+        <di:waypoint x="280" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hqcj2n_di" bpmnElement="Flow_0hqcj2n">
+        <di:waypoint x="380" y="250" />
+        <di:waypoint x="445" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09fmq0h_di" bpmnElement="Flow_09fmq0h">
+        <di:waypoint x="470" y="225" />
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="540" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="472" y="170" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05lj2qu_di" bpmnElement="Flow_05lj2qu">
+        <di:waypoint x="470" y="275" />
+        <di:waypoint x="470" y="350" />
+        <di:waypoint x="540" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="469" y="310" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g5a4ax_di" bpmnElement="Flow_1g5a4ax">
+        <di:waypoint x="640" y="350" />
+        <di:waypoint x="691" y="350" />
+        <di:waypoint x="691" y="230" />
+        <di:waypoint x="742" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_155m0eq_di" bpmnElement="Flow_155m0eq">
+        <di:waypoint x="640" y="120" />
+        <di:waypoint x="691" y="120" />
+        <di:waypoint x="691" y="230" />
+        <di:waypoint x="742" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
