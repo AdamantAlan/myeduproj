@@ -1,0 +1,6 @@
+@EventLearn_HostAddress = http://localhost:5153
+
+GET {{EventLearn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
