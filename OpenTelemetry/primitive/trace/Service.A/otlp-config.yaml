@@ -1,0 +1,12 @@
+# Endpoint дл€ отправки данных трассировки
+endpoint: http://localhost:4318
+# Protocol дл€ отправки данных трассировки
+protocol: http
+# Batch exporter configuration
+batch:
+  # Timeout дл€ отправки данных трассировки
+  timeout: 10s
+  # ћаксимальный размер пакета
+  max_packet_size: 65536
+  # ћаксимальное количество трассировок в пакете
+  max_queue_size: 1000
