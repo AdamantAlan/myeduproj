@@ -18,8 +18,7 @@ namespace Service.B.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public async Task<IEnumerable<WeatherForecast>> Get()
         {
-
-            HttpContext.Response.Headers.Add("Request-Id", Activity.Current?.TraceId.ToString() ?? "");
+            HttpContext.Response.Headers.Append("Request-Id", Activity.Current?.TraceId.ToString() ?? "");
 
             var httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync("http://localhost:5100/WeatherForecast");

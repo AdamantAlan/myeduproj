@@ -1,3 +1,4 @@
+using OpenTelemetry;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 
@@ -10,19 +11,22 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddHttpClient();
 
 
 builder.Services.AddOpenTelemetry()
+        //Подключает все
+       //.UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf, new("http://localhost:4318"))
     .WithTracing(builder =>
     {
         builder.AddAspNetCoreInstrumentation();
         builder.AddHttpClientInstrumentation();
         builder.AddConsoleExporter();
-        builder.AddOtlpExporter(opt =>
+
+        builder.AddOtlpExporter("OLTP_TRACES", oltp =>
         {
-            opt.Endpoint = new("http://localhost:4318");
+            oltp.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+            oltp.Endpoint = new("http://localhost:4318/v1/traces");
         });
     });
 
