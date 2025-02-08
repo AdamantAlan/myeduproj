@@ -1,5 +1,7 @@
 using OpenTelemetry;
 using OpenTelemetry.Trace;
+using Service.B.BackgroundWorkers;
+using Service.B.Telemetry;
 using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,16 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
-
+builder.Services.AddHostedService<GetWeatherWorker>();
 
 builder.Services.AddOpenTelemetry()
         //Подключает все
        //.UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf, new("http://localhost:4318"))
     .WithTracing(builder =>
     {
-        builder.AddAspNetCoreInstrumentation();
-        builder.AddHttpClientInstrumentation();
-        builder.AddConsoleExporter();
+        builder.AddSource(WorkerActivitySource.Name)
+        .AddAspNetCoreInstrumentation()
+        //.AddHttpClientInstrumentation()
+        .AddConsoleExporter();
 
         builder.AddOtlpExporter("OLTP_TRACES", oltp =>
         {
