@@ -26,14 +26,8 @@ builder.Services.AddOpenTelemetry()
     {
         builder.AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddConsoleExporter();
-
-        builder.AddOtlpExporter("OLTP_TRACES", oltp =>
-        {
-            oltp.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
-            oltp.Endpoint = new("http://localhost:4318/v1/traces");
-            oltp.TimeoutMilliseconds = 1000;
-        });
+        .AddConsoleExporter()
+        .AddOtlpExporter();
     })
     .WithLogging(builder =>
     {
