@@ -11,7 +11,8 @@ builder.Services.AddOpenTelemetry()
         builder.AddRuntimeInstrumentation();
         builder.AddHttpClientInstrumentation();
         builder.AddConsoleExporter();
-        builder.AddPrometheusExporter();
+        //builder.AddPrometheusExporter();
+        builder.AddOtlpExporter();
     });
 
 builder.Services.AddControllers();
@@ -30,7 +31,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapPrometheusScrapingEndpoint();
+//app.MapPrometheusScrapingEndpoint();
 app.MapControllers();
 
 app.Run();

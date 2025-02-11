@@ -3,4 +3,4 @@
   - job_name: "prometheus"
     scrape_interval: 1s # poll very quickly for a more responsive demo
     static_configs:
-      - targets: ["host.docker.internal:5212"]
+      - targets: ["otel-collector:9090"]

@@ -7,3 +7,22 @@
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     restart: unless-stopped
+    networks:
+      - monitoring
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel_collector
+    command: ["--config=/etc/otel-collector-config.yml"]
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - "4317:4317" 
+      - "4318:4318"
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
