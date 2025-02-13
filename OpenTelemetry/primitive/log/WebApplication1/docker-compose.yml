@@ -1,0 +1,12 @@
+﻿version: '3.8'
+
+services:
+  seq:
+    image: datalust/seq:latest
+    restart: unless-stopped
+    ports:
+      - "5341:80"
+    environment:
+      - ACCEPT_EULA=Y
+      - Seq_User_Username=seqadmin
+      - Seq_User_Password=P@$$w0rd
