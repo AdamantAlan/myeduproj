@@ -1,0 +1,15 @@
+services:
+  clickhouse-learn:
+    image: yandex/clickhouse-server:latest
+    container_name: clickhouse-learn
+    ports:
+      - "8123:8123"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse       #- ./clickhouse-config.xml:/etc/clickhouse-server/config.xml:ro
+    environment:
+      - CLICKHOUSE_DB=testdata
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=admin
+
+volumes:
+  clickhouse_data:
