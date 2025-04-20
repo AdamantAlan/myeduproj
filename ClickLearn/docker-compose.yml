@@ -1,6 +1,6 @@
 services:
-  clickhouse-learn:
-    image: yandex/clickhouse-server:latest
+  clickhouse-learn: 
+    image: clickhouse/clickhouse-server:latest # yandex/clickhouse-server:latest
     container_name: clickhouse-learn
     ports:
       - "8123:8123"
