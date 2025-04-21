@@ -1,0 +1,23 @@
+<clickhouse>
+    <!-- Определение нового профиля -->
+    <profiles>
+        <custom_profile>
+            <max_memory_usage>2000000000</max_memory_usage> <!-- 2 ГБ -->
+            <max_threads>4</max_threads>
+        </custom_profile>
+    </profiles>
+
+    <!-- Определение нового пользователя -->
+    <users>
+		<userload>
+            <password>custom_password123</password>
+            <profile>custom_profile</profile>
+            <quota>default</quota>
+        </userload>
+    </users>
+
+    <!-- Квоты для пользователей -->
+    <quotas>
+        <default/>
+    </quotas>
+</clickhouse>

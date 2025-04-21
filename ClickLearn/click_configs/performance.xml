@@ -1,0 +1,6 @@
+<clickhouse>
+    <!-- Настройки производительности -->
+    <max_memory_usage replace="replace">8000000000</max_memory_usage> <!-- 8 ГБ -->
+    <max_execution_time>60</max_execution_time> <!-- Максимальное время выполнения запроса в секундах  -->
+    <max_threads>8</max_threads> <!-- Максимальное количество потоков для выполнения запроса -->
+</clickhouse>

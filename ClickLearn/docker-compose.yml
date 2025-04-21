@@ -1,11 +1,14 @@
 services:
   clickhouse-learn: 
-    image: clickhouse/clickhouse-server:latest # yandex/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-learn
     ports:
       - "8123:8123"
     volumes:
-      - clickhouse_data:/var/lib/clickhouse       #- ./clickhouse-config.xml:/etc/clickhouse-server/config.xml:ro
+      - clickhouse_data:/var/lib/clickhouse       
+      - ./click_configs/config.xml:/etc/clickhouse-server/config.xml:ro
+      - ./click_configs/users.xml:/etc/clickhouse-server/users.xml:ro
+      - ./click_configs/performance.xml:/etc/clickhouse-server/performance.xml:ro
     environment:
       - CLICKHOUSE_DB=testdata
       - CLICKHOUSE_USER=admin

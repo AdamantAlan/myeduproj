@@ -1,0 +1,23 @@
+<clickhouse>
+    <!-- Сетевые настройки -->
+    <listen_host>::</listen_host>
+    <http_port>8123</http_port>
+
+    <!-- Пути к данным и логам -->
+    <path>/var/lib/clickhouse/</path>
+    <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+    <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+    <logger>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <level>information</level>
+    </logger>
+
+    <!-- Параметры производительности -->
+    <max_memory_usage>10000000000</max_memory_usage>
+    <mark_cache_size>5368709120</mark_cache_size>
+    <uncompressed_cache_size>8589934592</uncompressed_cache_size>
+
+    <!-- Включение файла users.xml через users_config -->
+    <users_config>/etc/clickhouse-server/users.xml</users_config>
+</clickhouse>
