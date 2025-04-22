@@ -6,9 +6,9 @@ services:
       - "8123:8123"
     volumes:
       - clickhouse_data:/var/lib/clickhouse       
-      - ./click_configs/config.xml:/etc/clickhouse-server/config.xml:ro
-      - ./click_configs/users.xml:/etc/clickhouse-server/users.xml:ro
-      - ./click_configs/performance.xml:/etc/clickhouse-server/performance.xml:ro
+      #- ./click_configs/config.xml:/etc/clickhouse-server/config.xml:ro
+      #- ./click_configs/users.xml:/etc/clickhouse-server/users.xml:ro
+      #- ./click_configs/performance.xml:/etc/clickhouse-server/config.d/performance.xml:ro
     environment:
       - CLICKHOUSE_DB=testdata
       - CLICKHOUSE_USER=admin
