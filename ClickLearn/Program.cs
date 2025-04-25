@@ -1,4 +1,6 @@
 
+using ClickHouse.Client.ADO;
+
 namespace ClickLearn
 {
     public class Program
@@ -8,6 +10,12 @@ namespace ClickLearn
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddTransient(provider =>
+            {
+                var connectionString = provider.GetRequiredService<IConfiguration>().GetConnectionString("ClickHouse");
+                return new ClickHouseConnection(connectionString);
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
