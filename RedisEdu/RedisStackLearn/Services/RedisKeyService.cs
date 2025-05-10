@@ -1,8 +1,9 @@
-﻿using StackExchange.Redis;
+﻿using NRedisStack;
+using StackExchange.Redis;
 
 namespace RedisStackLearn.Services
 {
-    public class RedisKeyService(ConnectionMultiplexer connection)
+    public class RedisKeyService(IConnectionMultiplexer connection)
     {
         private IDatabase db { get; set; } = connection.GetDatabase(0);
 
@@ -17,35 +18,21 @@ namespace RedisStackLearn.Services
             return value!;
         }
 
-        public Task HSetAsync(string prefix, string key, Dictionary<string,string> hash)
+        public async Task<string> PipelineAsync(string key)
         {
-            var hashEntry = new List<HashEntry>();
+            var pipe = new Pipeline(db);
 
-            foreach (var hashKey in hash.Keys)
+            for (int i = 0; i < 5; i++)
             {
-                hashEntry.Add(new HashEntry(hashKey, hash[hashKey]));
+#pragma warning disable CS4014 
+                pipe.Db.StringSetAsync($"seat:{i}", $"#{i}");
+#pragma warning restore CS4014 
             }
 
-            return db.HashSetAsync($"{prefix}:{key}", hashEntry.ToArray());
-        }
+            pipe.Execute();
 
-        public async Task<string> HGetAsync(string key, string property)
-        {
-            string? value = await db.HashGetAsync(key, property);
-            return value!;
-        }
-
-        public async Task<Dictionary<string, string>> HGetAllAsync(string key)
-        {
-            HashEntry[] hashEntrys = await db.HashGetAllAsync(key);
-            var relultHash = new Dictionary<string, string>();
-
-            foreach (var hashEntry in hashEntrys)
-            {
-                relultHash.Add(hashEntry.Name!, hashEntry.Value!);
-            }
-
-            return relultHash;
         }
     }
+
+
 }

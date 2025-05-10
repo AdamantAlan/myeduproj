@@ -5,17 +5,17 @@ using NRedisStack.Search.Literals.Enums;
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace RedisStackLearn.Controllers
+namespace RedisStackLearn.Services
 {
-    public class RedisJsonService(ConnectionMultiplexer connection)
+    public class RedisJsonService(IConnectionMultiplexer connection)
     {
         private const string JSON_KEY = "json";
         private IDatabase db { get; set; } = connection.GetDatabase(0);
 
         public Task<bool> SetJsonAsync(string prefix, string key, object @object) =>
-            db.JSON().SetAsync($"{prefix}:{key}","$", JsonSerializer.Serialize(@object));
+            db.JSON().SetAsync($"{prefix}:{key}", "$", JsonSerializer.Serialize(@object));
 
-        public async Task<T?> GetJsonAsync<T>(string key, string? property = null) where T : class
+        public async Task<T> GetJsonAsync<T>(string key, string property = null) where T : class
         {
             var redisResult = await db.JSON().GetAsync(key);
 
@@ -37,7 +37,7 @@ namespace RedisStackLearn.Controllers
                     .AddNumericField(new FieldName("$.age", "age")));
         }
 
-        public async Task<IEnumerable<T>> SearchAsync<T>(string index, string query = "Paul @age:[30 40]") 
+        public async Task<IEnumerable<T>> SearchAsync<T>(string index, string query = "Paul @age:[30 40]")
             where T : class
         {
             var searchResult = await db.FT().SearchAsync(

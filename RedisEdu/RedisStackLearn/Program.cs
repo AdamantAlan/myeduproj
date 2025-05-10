@@ -1,4 +1,6 @@
 
+using StackExchange.Redis;
+
 namespace RedisStackLearn
 {
     public class Program
@@ -6,6 +8,14 @@ namespace RedisStackLearn
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                return ConnectionMultiplexer.Connect(new ConfigurationOptions() 
+                {
+                    EndPoints = { "localhost:6379" },
+                });
+            });
 
             builder.Services.AddControllers();
 
