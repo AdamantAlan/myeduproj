@@ -18,6 +18,17 @@ namespace RedisStackLearn.Services
             return value!;
         }
 
+        public Task<bool> KeyExistsAsync(string key) => db.KeyExistsAsync(key);
+
+        public Task<bool> SetKeyTtlAsync(string key, TimeSpan ttl) => db.KeyExpireAsync(key, ttl);
+
+        public Task<DateTime?> GetKeyTtlAsync(string key) => db.KeyExpireTimeAsync(key);
+
+        public Task<bool> KeyCopyAsync(string sourceKey, string destKey, int database) => 
+            db.KeyCopyAsync(sourceKey, destKey, database);
+
+        public Task<bool> KeyRenameAsync(string sourceKey, string rename) => db.KeyRenameAsync(sourceKey, rename);
+
         public Task<long> IncrAsync(string key) => db.StringIncrementAsync(key);
 
         public Task<long> IncrbyAsync(string key, long count) => db.StringIncrementAsync(key, count);
