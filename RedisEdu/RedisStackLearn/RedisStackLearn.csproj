@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageReference Include="NRedisStack" Version="1.0.0" />
+    <PackageReference Include="Redis.OM" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

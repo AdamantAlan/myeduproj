@@ -2,7 +2,6 @@
 using NRedisStack.Search.Literals.Enums;
 using NRedisStack.Search;
 using StackExchange.Redis;
-using System.Text.Json;
 
 namespace RedisStackLearn.Services
 {
