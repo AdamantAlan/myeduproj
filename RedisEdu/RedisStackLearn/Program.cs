@@ -1,5 +1,9 @@
 
+using Microsoft.Extensions.DependencyInjection;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
 using StackExchange.Redis;
+using System.Net;
 
 namespace RedisStackLearn
 {
@@ -16,6 +20,15 @@ namespace RedisStackLearn
                     EndPoints = { "localhost:6379" },
                 });
             });
+
+            //Äëÿ RedLock
+            builder.Services.AddSingleton(RedLockFactory.Create(new List<RedLockEndPoint>
+            {       
+                new RedLockEndPoint
+                {
+                    EndPoint = new DnsEndPoint("localhost", 6379)
+                }
+             }));
 
             builder.Services.AddControllers();
 
