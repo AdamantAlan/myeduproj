@@ -12,6 +12,7 @@
     <PackageReference Include="NRedisStack" Version="1.0.0" />
     <PackageReference Include="Redis.OM" Version="1.0.0" />
     <PackageReference Include="RedLock.net" Version="2.3.2" />
+    <PackageReference Include="StackExchange.Redis.Extensions" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
