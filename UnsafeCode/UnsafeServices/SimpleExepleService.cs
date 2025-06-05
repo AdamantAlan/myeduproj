@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Runtime.InteropServices;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.Runtime.InteropServices;
 
 namespace UnsafeCode.UnsafeServices
 {
