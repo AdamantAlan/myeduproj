@@ -44,8 +44,11 @@ docker exec -it postgres2 psql -U user1 -d postgres -c "SELECT pg_is_in_recovery
 docker exec -it postgres3 psql -U user1 -d postgres -c "SELECT pg_is_in_recovery();"
 
 # Создадим что-то на мастере
-docker exec -it postgres1 psql -U user1 -d db1 -c "CREATE TABLE my_test_rep(a int); INSERT INTO test_rep VALUES (1),(2);"
+docker exec -it postgres1 psql -U user1 -d db1 -c "CREATE TABLE my_test_rep2(a int); INSERT INTO my_test_rep2 VALUES (1),(2);"
 
 # Проверим на репликах (таблица появится, но подключаться надо к их БД)
 docker exec -it postgres2 psql -U user1 -d db1 -c "\dt"
 docker exec -it postgres3 psql -U user1 -d db1 -c "\dt"
+
+
+docker exec -it postgres1 psql -U user1 -d db1 -c "SELECT * FROM my_test_rep2"
