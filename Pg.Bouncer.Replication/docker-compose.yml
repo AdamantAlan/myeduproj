@@ -43,6 +43,36 @@ services:
     networks:
       - pg_net
 
+  pgbouncer1:
+    image: edoburu/pgbouncer:v1.24.0-p1
+    container_name: pgbouncer1
+    restart: unless-stopped
+    volumes:
+      - ./pgbouncer/pgbouncer1.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    networks: 
+      - pg_net
+
+  pgbouncer2:
+    image: edoburu/pgbouncer:v1.24.0-p1
+    container_name: pgbouncer2
+    restart: unless-stopped
+    volumes:
+      - ./pgbouncer/pgbouncer2.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    networks: 
+      - pg_net
+
+  pgbouncer3:
+    image: edoburu/pgbouncer:v1.24.0-p1
+    container_name: pgbouncer3
+    restart: unless-stopped
+    volumes:
+      - ./pgbouncer/pgbouncer3.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    networks: 
+      - pg_net
+
   haproxy:
     image: haproxy:2.9-alpine
     container_name: haproxy-pg
