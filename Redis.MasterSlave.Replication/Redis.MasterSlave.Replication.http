@@ -1,0 +1,6 @@
+@Redis.MasterSlave.Replication_HostAddress = http://localhost:5078
+
+GET {{Redis.MasterSlave.Replication_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
