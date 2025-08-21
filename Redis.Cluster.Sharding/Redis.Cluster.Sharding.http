@@ -1,0 +1,6 @@
+@Redis.Cluster.Sharding_HostAddress = http://localhost:5082
+
+GET {{Redis.Cluster.Sharding_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
