@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyNetQ" Version="8.0.0-beta99" />
+    <PackageReference Include="EasyNetQ.Serialization.SystemTextJson" Version="8.0.0-beta99" />
+  </ItemGroup>
+
+</Project>

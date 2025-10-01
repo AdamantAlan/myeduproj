@@ -6,6 +6,8 @@ services:
     environment:
       - RABBITMQ_ERLANG_COOKIE=supersecretcookie
       - RABBITMQ_USE_LONGNAME=true
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=secret
     ports:
       - "15672:15672"   # web UI
       - "5672:5672"     # AMQP
@@ -20,6 +22,8 @@ services:
     environment:
       - RABBITMQ_ERLANG_COOKIE=supersecretcookie
       - RABBITMQ_USE_LONGNAME=true
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=secret
     ports:
       - "15673:15672"
       - "5673:5672"
@@ -36,6 +40,8 @@ services:
     environment:
       - RABBITMQ_ERLANG_COOKIE=supersecretcookie
       - RABBITMQ_USE_LONGNAME=true
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=secret
     ports:
       - "15674:15672"
       - "5674:5672"
