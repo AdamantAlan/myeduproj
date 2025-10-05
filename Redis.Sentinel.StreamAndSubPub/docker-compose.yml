@@ -1,0 +1,53 @@
+services:
+  redis-master:
+    image: redis:7
+    container_name: redis-master
+    command: redis-server --appendonly yes
+    ports: ["6379:6379"]
+
+  redis-replica1:
+    image: redis:7
+    container_name: redis-replica1
+    command: redis-server --replicaof redis-master 6379
+    depends_on: [redis-master]
+
+  redis-replica2:
+    image: redis:7
+    container_name: redis-replica2
+    command: redis-server --replicaof redis-master 6379
+    depends_on: [redis-master]
+
+  sentinel1:
+    image: redis:7
+    container_name: redis-sentinel1
+    command: >
+      sh -c "mkdir -p /etc/redis &&
+      [ ! -f /etc/redis/sentinel.conf ] && touch /etc/redis/sentinel.conf;
+      redis-sentinel /etc/redis/sentinel.conf"
+    volumes:
+      - ./sentinel-data:/etc/redis
+    depends_on: [redis-master, redis-replica1, redis-replica2]
+    ports:
+      - "26379:26379"
+
+  sentinel2:
+    image: redis:7
+    container_name: redis-sentinel2
+    command: >
+      sh -c "mkdir -p /etc/redis &&
+      [ ! -f /etc/redis/sentinel.conf ] && touch /etc/redis/sentinel.conf;
+      redis-sentinel /etc/redis/sentinel.conf"
+    volumes:
+      - ./sentinel-data:/etc/redis
+    depends_on: [redis-master, redis-replica1, redis-replica2]
+
+  sentinel3:
+    image: redis:7
+    container_name: redis-sentinel3
+    command: >
+      sh -c "mkdir -p /etc/redis &&
+      [ ! -f /etc/redis/sentinel.conf ] && touch /etc/redis/sentinel.conf;
+      redis-sentinel /etc/redis/sentinel.conf"
+    volumes:
+      - ./sentinel-data:/etc/redis
+    depends_on: [redis-master, redis-replica1, redis-replica2]
