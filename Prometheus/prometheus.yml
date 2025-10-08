@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 5s    # как часто собирать метрики
+  
+rule_files:
+  - "alert_rules.yml"
+  
+scrape_configs:
+  # Метрики самого Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # Системные метрики с node-exporter
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Метрики твоего приложения
+  - job_name: 'app'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['host.docker.internal:5010']
