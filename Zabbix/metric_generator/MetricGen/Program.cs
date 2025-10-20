@@ -1,18 +1,18 @@
-using Microsoft.AspNetCore.Builder;
+ï»¿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 var app = WebApplication.CreateBuilder(args).Build();
 
 var rand = new Random();
-float cpuLoad = rand.NextSingle() * 50f;      // îò 0 äî 50%
+float cpuLoad = rand.NextSingle() * 50f;      // Ð¾Ñ‚ 0 Ð´Ð¾ 50%
 uint requestCount = (uint)rand.Next(1000, 2000);
 double deltaValue = rand.NextDouble() * 5;
 
-// Ýíäïîèíò /metrics
+// Ð­Ð½Ð´Ð¿Ð¾Ð¸Ð½Ñ‚ /metrics
 app.MapGet("/metrics", () =>
 {
-    // èìèòàöèÿ èçìåíåíèÿ ìåòðèê
+    // Ð¸Ð¼Ð¸Ñ‚Ð°Ñ†Ð¸Ñ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ Ð¼ÐµÑ‚Ñ€Ð¸Ðº
     cpuLoad = Math.Clamp(cpuLoad + (rand.NextSingle() - 0.5f) * 5f, 0f, 100f);     
     requestCount += (uint)rand.Next(1, 50);                                       
     deltaValue = rand.NextDouble() * 10;                                          
@@ -23,6 +23,9 @@ app.MapGet("/metrics", () =>
         requests = requestCount,
         delta = Math.Round(deltaValue, 3)
     };
+
+    app.Logger.LogInformation(
+         $"Returned metrics: {JsonSerializer.Serialize(metrics)}");
 
     return Results.Json(metrics);
 });

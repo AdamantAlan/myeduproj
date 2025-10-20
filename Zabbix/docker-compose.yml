@@ -60,10 +60,12 @@ services:
     image: zabbix/zabbix-agent2:alpine-7.4-latest
     container_name: zabbix-agent
     environment:
-      - ZBX_SERVER=zabbix-server
+      - ZBX_SERVER=0.0.0.0/0
       - ZBX_SERVER_ACTIVE=zabbix-server:10051
       - ZBX_HOSTNAME=docker-agent
       - ZBX_DEBUGLEVEL=4
+    volumes:
+      - ./custom.conf:/etc/zabbix/zabbix_agent2.d/custom.conf:ro
     depends_on:
       - zabbix-server
     networks:
