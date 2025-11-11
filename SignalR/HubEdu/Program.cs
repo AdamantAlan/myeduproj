@@ -14,13 +14,15 @@ builder.Services.AddSignalR(hubOptions =>
     options.EnableDetailedErrors = true;
     options.KeepAliveInterval = TimeSpan.FromMinutes(1);
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
-}); ;
+})
+.AddMessagePackProtocol();
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+app.MapHub<StreamHub>("/stream");
 app.MapHub<ChatHub>("/chat",
     options => {
         options.ApplicationMaxBufferSize = 128;

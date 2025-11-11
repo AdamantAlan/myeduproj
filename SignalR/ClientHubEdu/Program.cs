@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 var connection = new HubConnectionBuilder()
     .WithUrl("http://localhost:5054/chat")
     .WithAutomaticReconnect(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5) })
     .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Information))
+    .AddMessagePackProtocol()
     .Build();
 
 connection.On<string, string>("Receive", 

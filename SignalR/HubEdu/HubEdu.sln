@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HubEdu", "HubEdu.csproj", "{62244A86-442E-4ECA-8D78-D2F086BEFF03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientHubEdu", "..\ClientHubEdu\ClientHubEdu.csproj", "{4D5DBF64-4266-481A-B6E8-6CED746CADFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientStreamHubEdu", "..\ClientStreamHubEdu\ClientStreamHubEdu.csproj", "{93464EB7-E554-4540-A59A-7A0370C5BF7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4D5DBF64-4266-481A-B6E8-6CED746CADFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D5DBF64-4266-481A-B6E8-6CED746CADFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D5DBF64-4266-481A-B6E8-6CED746CADFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93464EB7-E554-4540-A59A-7A0370C5BF7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93464EB7-E554-4540-A59A-7A0370C5BF7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93464EB7-E554-4540-A59A-7A0370C5BF7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93464EB7-E554-4540-A59A-7A0370C5BF7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
