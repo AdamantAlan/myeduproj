@@ -1,0 +1,47 @@
+########PC###########
+
+[Interface]
+PrivateKey = <PRIVATE_PEER_KEY>
+Address = 10.10.0.2/24
+DNS = 8.8.8.8
+
+[Peer]
+PublicKey = <PUBLIC_SERVER_KEY>
+AllowedIPs = 10.10.0.0/24
+Endpoint = XX.XXX.XX.XXX:51820
+PersistentKeepalive = 25
+
+########WIRE_GUARD_SERVER###########
+
+[Interface]
+Address = 10.10.0.1/24
+PrivateKey = <PRIVATE_SERVER_KEY>
+ListenPort = 51820
+
+PostUp = sysctl -w net.ipv4.ip_forward=1
+PostUp = iptables -A INPUT -p udp --dport 51820 -j ACCEPT
+PostUp = iptables -A INPUT -i wg0 -j ACCEPT
+
+PostDown = iptables -D INPUT -p udp --dport 51820 -j ACCEPT
+PostDown = iptables -D INPUT -i wg0 -j ACCEPT
+
+[Peer]
+PublicKey = <PRIVATE_PEER_KEY>
+AllowedIPs = 10.10.0.2/32
+
+[Peer]
+PublicKey = <PRIVATE_PEER_KEY>
+AllowedIPs = 10.10.0.3/32
+
+
+########SERVICE_B###########
+
+[Interface]
+Address = 10.10.0.3/32
+PrivateKey = <PRIVATE_PEER_KEY>
+
+[Peer]
+PublicKey = <PUBLIC_SERVER_KEY>
+AllowedIPs = 10.10.0.0/24
+Endpoint = XX.XXX.XX.XXX:51820
+PersistentKeepalive = 25
