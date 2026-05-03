@@ -1,0 +1,47 @@
+@MasstransitEdu_HostAddress = http://localhost:5282
+
+GET {{MasstransitEdu_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{MasstransitEdu_HostAddress}}/api/messaging/orders
+Content-Type: application/json
+
+{
+  "customerName": "Ivan Petrov",
+  "total": 1250.50
+}
+
+###
+
+POST {{MasstransitEdu_HostAddress}}/api/messaging/payments
+Content-Type: application/json
+
+{
+  "orderId": "11111111-1111-1111-1111-111111111111",
+  "amount": 1250.50,
+  "provider": "demo-pay"
+}
+
+###
+
+POST {{MasstransitEdu_HostAddress}}/api/messaging/inventory
+Content-Type: application/json
+
+{
+  "sku": "SKU-001",
+  "quantityDelta": -2,
+  "warehouseCode": "ekb"
+}
+
+###
+
+POST {{MasstransitEdu_HostAddress}}/api/messaging/orders/status
+Content-Type: application/json
+
+{
+  "orderId": "11111111-1111-1111-1111-111111111111"
+}
+
+###
