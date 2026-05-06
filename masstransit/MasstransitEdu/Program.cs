@@ -2,6 +2,7 @@ using MassTransit;
 using MasstransitEdu.Messaging;
 using MasstransitEdu.Messaging.Consumers;
 using MasstransitEdu.Messaging.Contracts;
+using MasstransitEdu.Messaging.Definition;
 using MasstransitEdu.Messaging.Producers;
 using RabbitMQ.Client;
 
@@ -31,7 +32,7 @@ namespace MasstransitEdu
 
                 x.AddConsumer<OrderSubmittedConsumer>();
                 x.AddConsumer<PaymentCapturedConsumer>();
-                x.AddConsumer<InventoryChangedConsumer>();
+                x.AddConsumer<InventoryChangedConsumer, InventoryChangedConsumerDefinition>();
                 x.AddConsumer<GetOrderStatusConsumer>();
                 x.AddRequestClient<GetOrderStatus>(new Uri("queue:order-status-requests"));
 
@@ -45,10 +46,18 @@ namespace MasstransitEdu
                     {
                         host.Username(rabbitMqOptions.Username);
                         host.Password(rabbitMqOptions.Password);
+
+                        host.Heartbeat(TimeSpan.FromSeconds(15));
+                        host.RequestedConnectionTimeout(TimeSpan.FromSeconds(10));
                     });
 
                     cfg.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
                     cfg.UseInMemoryOutbox(context);
+
+                    cfg.Message<OrderSubmitted>(x =>
+                    {
+                        x.SetEntityName("order-submitted");
+                    });
 
                     cfg.Publish<OrderSubmitted>(exchange =>
                     {
@@ -70,12 +79,25 @@ namespace MasstransitEdu
                         exchange.ExchangeType = ExchangeType.Direct;
                     });
 
-                    cfg.ReceiveEndpoint("orders-submitted", endpoint =>
+                    cfg.ReceiveEndpoint("orders-submitted-queue", endpoint =>
                     {
                         ConfigureDeadLetterQueue(endpoint, rabbitMqOptions);
                         endpoint.PrefetchCount = 16;
                         endpoint.ConcurrentMessageLimit = 8;
                         endpoint.ConfigureConsumer<OrderSubmittedConsumer>(context);
+                        endpoint.SetQueueArgument("x-queue-type", "quorum");
+                        endpoint.UseMessageRetry(opt =>
+                        {
+                            opt.Interval(3, TimeSpan.FromSeconds(5));
+                        });
+
+                        endpoint.UseDelayedRedelivery(r =>
+                        {
+                            r.Intervals(
+                                TimeSpan.FromMinutes(1),
+                                TimeSpan.FromMinutes(5),
+                                TimeSpan.FromMinutes(15));
+                        });
                     });
 
                     cfg.ReceiveEndpoint("payments-captured", endpoint =>
@@ -84,6 +106,7 @@ namespace MasstransitEdu
                         endpoint.ConfigureConsumeTopology = false;
                         endpoint.PrefetchCount = 8;
                         endpoint.ConcurrentMessageLimit = 4;
+                        endpoint.SetQueueArgument("x-queue-type", "quorum");
                         endpoint.Bind<PaymentCaptured>(binding =>
                         {
                             binding.ExchangeType = ExchangeType.Direct;
@@ -93,26 +116,13 @@ namespace MasstransitEdu
                         endpoint.ConfigureConsumer<PaymentCapturedConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint("inventory-changed", endpoint =>
-                    {
-                        ConfigureDeadLetterQueue(endpoint, rabbitMqOptions);
-                        endpoint.ConfigureConsumeTopology = false;
-                        endpoint.PrefetchCount = 32;
-                        endpoint.ConcurrentMessageLimit = 16;
-                        endpoint.Bind<InventoryChanged>(binding =>
-                        {
-                            binding.ExchangeType = ExchangeType.Topic;
-                            binding.RoutingKey = "inventory.*.changed";
-                        });
-                        endpoint.ConfigureConsumer<InventoryChangedConsumer>(context);
-                    });
-
                     cfg.ReceiveEndpoint("order-status-requests", endpoint =>
                     {
                         ConfigureDeadLetterQueue(endpoint, rabbitMqOptions);
                         endpoint.ExchangeType = ExchangeType.Direct;
                         endpoint.PrefetchCount = 8;
                         endpoint.ConcurrentMessageLimit = 4;
+                        endpoint.SetQueueArgument("x-queue-type", "quorum");
                         endpoint.ConfigureConsumer<GetOrderStatusConsumer>(context);
                     });
                 });
