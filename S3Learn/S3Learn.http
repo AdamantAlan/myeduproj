@@ -1,0 +1,6 @@
+@S3Learn_HostAddress = http://localhost:5107
+
+GET {{S3Learn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
