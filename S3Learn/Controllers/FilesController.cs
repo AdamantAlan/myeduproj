@@ -55,5 +55,11 @@ namespace S3Learn.Controllers
         {
             return fileService.DeleteFileAsync(bucketName, key, versionId!, cancellationToken);
         }
+
+        [HttpGet("temp-url")]
+        public IActionResult GetTempUrl(string bucketName, string key, TimeSpan lifeTime , CancellationToken cancellationToken)
+        {
+            return Ok(fileService.GetDownloadUrl(bucketName, key, lifeTime));
+        }
     }
 }

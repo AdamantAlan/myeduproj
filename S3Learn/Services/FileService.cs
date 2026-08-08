@@ -70,7 +70,7 @@ namespace S3Learn.Services
 
         public async Task DeleteFileAsync(string bucketName, string key, string versionId, CancellationToken cancellationToken = default)
         {
-            await s3Client.DeleteObjectAsync(
+            var response = await s3Client.DeleteObjectAsync(
                 new DeleteObjectRequest
                 {
                     BucketName = bucketName,
@@ -78,6 +78,19 @@ namespace S3Learn.Services
                     VersionId = versionId
                 },
                 cancellationToken);
+        }
+
+        public string GetDownloadUrl(string bucket, string key, TimeSpan lifetime)
+        {
+            var request = new GetPreSignedUrlRequest
+            {
+                BucketName = bucket,
+                Key = key,
+                Verb = HttpVerb.GET,
+                Expires = DateTime.UtcNow.Add(lifetime)
+            };
+
+            return s3Client.GetPreSignedURL(request);
         }
     }
 }
