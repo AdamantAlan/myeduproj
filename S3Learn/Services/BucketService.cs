@@ -122,6 +122,24 @@ namespace S3Learn.Services
             }
         }
 
+        public async Task ChangeVersioningAsync(string bucketName, CancellationToken cancellationToken = default)
+        {
+            await ValidateBucketExists(bucketName);
+            VersionStatus currentVersioning = await GetVersioningStatus(bucketName, cancellationToken) ?? VersionStatus.Suspended;
+            var newVersioning = currentVersioning.Value == VersionStatus.Enabled.Value ? VersionStatus.Suspended : VersionStatus.Enabled;
+
+            await s3Client.PutBucketVersioningAsync(
+                new PutBucketVersioningRequest
+                {
+                    BucketName = bucketName,
+                    VersioningConfig = new S3BucketVersioningConfig
+                    {
+                        Status = newVersioning
+                    }
+                },
+                cancellationToken);
+        }
+
         private async Task<bool> ValidateBucketNotExists(string bucketName)
         {
             return await IsBucketExistAsync(bucketName) 
@@ -147,6 +165,18 @@ namespace S3Learn.Services
                 Console.WriteLine(e.Message);
                 throw;
             }
+        }
+
+        public async Task<VersionStatus?> GetVersioningStatus(string bucketName, CancellationToken cancellationToken = default)
+        {
+            var response = await s3Client.GetBucketVersioningAsync(
+                new GetBucketVersioningRequest
+                {
+                    BucketName = bucketName
+                },
+                cancellationToken);
+
+            return response.VersioningConfig.Status;
         }
     }
 }

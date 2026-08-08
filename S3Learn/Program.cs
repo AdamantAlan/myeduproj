@@ -32,6 +32,7 @@ builder.Services.AddSingleton<IAmazonS3>(sp =>
 });
 
 builder.Services.AddScoped<BucketService>();
+builder.Services.AddScoped<FileService>();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

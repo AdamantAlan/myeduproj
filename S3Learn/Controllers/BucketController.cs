@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using S3Learn.Services;
 using S3Learn.Settings;
 
@@ -7,7 +6,7 @@ namespace S3Learn.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BucketController(BucketService s3Service) : ControllerBase
+    public class BucketsController(BucketService s3Service) : ControllerBase
     {
         [HttpGet]
         public Task<IReadOnlyList<S3BucketResponse>> GetAll(CancellationToken cancellationToken)
@@ -25,6 +24,12 @@ namespace S3Learn.Controllers
         public Task AddTagsAll(string bucketName, Dictionary<string, string> tags, CancellationToken cancellationToken)
         {
             return s3Service.SetBucketTagsAsync(bucketName, tags, cancellationToken);
+        }
+
+        [HttpPut("versioning")]
+        public Task ChangeVersioning(string bucketName, CancellationToken cancellationToken)
+        {
+            return s3Service.ChangeVersioningAsync(bucketName, cancellationToken);
         }
 
         [HttpDelete]
