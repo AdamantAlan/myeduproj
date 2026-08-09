@@ -27,8 +27,8 @@ namespace S3Learn.Services
                         {
                             BucketName = bucket.BucketName,
                             CreationDate = bucket.CreationDate,
-                            Region = bucket.BucketRegion, 
-                            Tags = taggingResponse.TagSet.ToDictionary(x => x.Key,x => x.Value)
+                            Region = bucket.BucketRegion,
+                            Tags = taggingResponse.TagSet.ToDictionary(x => x.Key, x => x.Value)
                         });
                     }
                     catch (AmazonS3Exception ex) when (ex.ErrorCode == "NoSuchTagSet")
@@ -61,7 +61,7 @@ namespace S3Learn.Services
                 var createBucketRequest = new PutBucketRequest { BucketName = bucketName };
                 var createBucketResponse = await s3Client.PutBucketAsync(createBucketRequest, cancellationToken);
 
-                if(createBucketResponse.HttpStatusCode is not HttpStatusCode.OK)
+                if (createBucketResponse.HttpStatusCode is not HttpStatusCode.OK)
                 {
                     throw new Exception($"Не удалось создать бакет {bucketName}");
                 }
@@ -97,7 +97,7 @@ namespace S3Learn.Services
         public async Task SetBucketTagsAsync(string bucketName, Dictionary<string, string> tags, CancellationToken cancellationToken = default)
         {
             await ValidateBucketExists(bucketName);
-            
+
             try
             {
                 ArgumentNullException.ThrowIfNull(tags);
@@ -142,7 +142,7 @@ namespace S3Learn.Services
 
         private async Task<bool> ValidateBucketNotExists(string bucketName)
         {
-            return await IsBucketExistAsync(bucketName) 
+            return await IsBucketExistAsync(bucketName)
                 ? throw new Exception($"Бакет {bucketName} уже существует")
                 : false;
         }
