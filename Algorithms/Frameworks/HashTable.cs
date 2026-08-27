@@ -1,5 +1,4 @@
 ﻿using Algorithms.Patterns.HashTable;
-using Algorithms.Patterns.TwoPointers;
 
 namespace Algorithms.Frameworks
 {
