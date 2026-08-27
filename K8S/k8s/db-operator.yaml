@@ -1,0 +1,82 @@
+#Self-hosted Kubernetes
+#│
+#├── PostgreSQL Operator       ← CloudNativePG
+#│
+#├── CSI / StorageClass        ← Longhorn / Ceph / etc.
+#│
+#├── PostgreSQL Cluster
+#│    ├── PG1 Primary  → PVC1
+#│    ├── PG2 Replica  → PVC2
+#│    └── PG3 Replica  → PVC3
+#│
+#├── Kubernetes Services
+#│    ├── postgres-rw
+#│    ├── postgres-ro
+#│    └── postgres-r
+#│
+#├── PgBouncer                 ← желательно при большом числе соединений
+#│
+#└── внешний LB                ← только если PostgreSQL нужен снаружи K8s
+#     например MetalLB
+
+
+#Устанавливаем CloudNativePG Operator
+#kubectl apply --server-side -f \
+#https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.30/releases/cnpg-1.30.0.yaml
+
+
+#kubectl get pods -n cnpg-system
+#cnpg-controller-manager-xxxxx   1/1   Running
+
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: databases
+
+---
+
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+
+metadata:
+  name: postgres
+  namespace: databases
+
+spec:
+  instances: 3
+
+  storage:
+    storageClass: longhorn
+    size: 100Gi
+
+
+#после apply
+#kubectl get pvc -n databases
+#NAME         STATUS   CAPACITY
+#postgres-1   Bound    100Gi
+#postgres-2   Bound    100Gi
+#postgres-3   Bound    100Gi
+#А синхронизация идёт не через PVC, а PostgreSQL replication
+
+#CloudNativePG по умолчанию создаёт три Kubernetes Service:
+#postgres-rw
+#     ↓
+#только Primary
+
+#postgres-ro
+#     ↓
+#только Replicas
+
+#postgres-r
+#     ↓
+#любой instance
+
+#Connection string: Host=postgres-rw.databases.svc.cluster.local;...
+
+
+
+
+
+
+
