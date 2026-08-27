@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: DaemonSet
+
+metadata:
+  name: node-agent
+  namespace: monitoring
+  labels:
+    app: node-agent
+
+spec:
+  # Определяет, какими Pod'ами управляет DaemonSet
+  selector:
+    matchLabels:
+      app: node-agent
+
+  # Стратегия обновления Pod'ов
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app: node-agent
+
+    spec:
+      # Запускать только на Linux Node
+      nodeSelector:
+        kubernetes.io/os: linux
+
+      # Позволяет запускаться даже на Node с taint.
+      # Часто нужно инфраструктурным DaemonSet-агентам.
+      tolerations:
+        - operator: Exists
+
+      containers:
+        - name: node-agent
+          image: my-registry/node-agent:1.0.0
+
+          # Не использовать :latest в production
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+
+          env:
+            # Передаём имя Node, на которой работает Pod
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+
+            # Имя самого Pod
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          # Агент готов принимать трафик
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          # Агент жив
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 20
+
+          # Монтируем логи конкретной Node
+          volumeMounts:
+            - name: host-logs
+              mountPath: /host/var/log
+              readOnly: true
+
+      # Директория берётся непосредственно с Node,
+      # на которой запущен данный экземпляр DaemonSet
+      volumes:
+        - name: host-logs
+          hostPath:
+            path: /var/log
+            type: Directory

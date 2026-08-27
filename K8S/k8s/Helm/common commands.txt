@@ -1,0 +1,38 @@
+# Проверить Chart
+helm lint ./backend
+
+# Посмотреть итоговые Kubernetes YAML
+helm template backend ./backend
+
+# Симуляция установки
+helm install backend ./backend --dry-run
+
+# Установить
+helm install backend ./backend
+
+# Посмотреть Releases
+helm list
+
+# Состояние Release
+helm status backend
+
+# Обновить
+helm upgrade backend ./backend
+
+# Install или Upgrade
+helm upgrade --install backend ./backend
+
+# Передать environment values
+helm upgrade backend ./backend -f values-prod.yaml
+
+# Переопределить конкретное значение
+helm upgrade backend ./backend --set image.tag=1.5
+
+# История
+helm history backend
+
+# Откат
+helm rollback backend 2
+
+# Удалить
+helm uninstall backend

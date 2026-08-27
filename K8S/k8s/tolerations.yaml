@@ -1,0 +1,30 @@
+#kubectl taint nodes node-3 workload=database:NoSchedule
+#Теперь Node содержит логически:
+#workload=database:NoSchedule
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: postgres
+
+spec:
+  tolerations:
+    - key: "workload"
+      operator: "Equal"
+      value: "database"
+      effect: "NoSchedule"
+    - key: "workload1"
+      operator: "Equal"
+      value: "database"
+      effect: "NoSchedule"
+
+  containers:
+    - name: postgres
+      image: postgres:16
+
+
+#правила:
+# Taint, Node → «Не пущу Pod без разрешения»
+# Toleration, Pod → «Я имею право сюда попасть»
+# Pod Anti-Affinity, Pod → «Не хочу быть рядом с такими Pod'ами»

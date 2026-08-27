@@ -1,0 +1,33 @@
+user:
+  isAdmin: false
+  name: Dmitry
+  age: 28
+  post: developer
+  skills:
+    - name: Backend dev
+      level: 5
+      desc: |
+        Умный красивый, привлекательный,
+        филантроп, добродейтель,
+        лучший руководитель группы разработки,
+        превосходный архитектор,
+        да еще и скромный
+    - name: Sql
+      level: 5
+      desc: |
+        не одно
+        декартово произведение
+        не пройдет
+  address:
+    country: Russia
+    city: Surgut
+    street: Cool 
+    houseNumber: 27
+    apartmentNumber: 131
+  pets:
+    - name: Sigma
+      breed: damn
+      isSayMay: yes
+    - name: Gold
+      breed: gold fish
+      isSayMay: no

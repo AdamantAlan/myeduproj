@@ -1,0 +1,46 @@
+# Значение
+{{ .Values.image.tag }}
+
+# Release
+{{ .Release.Name }}
+
+# Chart
+{{ .Chart.Name }}
+
+# Условие
+{{- if .Values.ingress.enabled }}
+...
+{{- end }}
+
+# Изменить context
+{{- with .Values.resources }}
+...
+{{- end }}
+
+# Цикл
+{{- range .Values.items }}
+{{ . }}
+{{- end }}
+
+# Root context
+{{ $.Release.Name }}
+
+# Default
+{{ .Values.replicaCount | default 1 }}
+
+# Строка в кавычках
+{{ .Values.name | quote }}
+
+# Объект → YAML
+{{ toYaml .Values.resources }}
+
+# Отступ
+{{ toYaml .Values.resources | nindent 4 }}
+
+# templates/_helpers.tpl
+{{- define "backend.fullname" -}}
+{{ .Release.Name }}-{{ .Chart.Name }}
+{{- end }}
+# вставляем в конфиг
+{{ include "backend.fullname" . }}
+# получится к примеру name: production-backend

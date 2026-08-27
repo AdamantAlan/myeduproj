@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: my-api
+  namespace: default
+  labels:
+    app: my-api
+
+spec:
+  # Начальное количество Pod'ов.
+  # Потом HPA сможет менять это значение.
+  replicas: 2
+
+  # Шаблон создаваемого Pod.
+  template:
+    metadata:
+      labels:
+        app: my-api
+
+  spec:
+    containers:
+      - name: my-api
+        image: mycompany/my-api:1.0
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+
+        # Переменные окружения
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Production
+
+        # --------------------------------
+        # RESOURCE REQUESTS / LIMITS
+        # --------------------------------
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "5Gi"
+          limits:
+            cpu: "1000m"
+            memory: "10Gi"
+
+        # --------------------------------
+        # HELTH CHECK
+        # --------------------------------
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        # --------------------------------
+        # MOUNTS
+        # --------------------------------
+        volumeMounts:
+           - name: config-volume
+             mountPath: /app/config
+             readOnly: true
+
+           - name: secret-volume
+             mountPath: /app/secrets
+             readOnly: true
+
+           - name: data-volume
+             mountPath: /app/data
+
+        # --------------------------------
+        # VOLUMES
+        # --------------------------------
+        volumes:
+          - name: config-volume
+            configMap:
+              name: my-api-config
+
+          - name: secret-volume
+            secret:
+              secretName: my-api-secret
+
+          - name: data-volume
+            persistentVolumeClaim:
+              claimName: my-api-pvc

@@ -1,0 +1,87 @@
+#kubectl label node node-3 disk=ssd
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: postgres
+
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: disk
+                operator: In
+                values:
+                  - ssd
+
+  containers:
+    - name: postgres
+      image: postgres:16
+
+---
+
+#node-1
+#├── frontend-1
+#├── frontend-2
+#└── frontend-3
+
+#node-2
+#node-3
+#нам так не нужно
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: frontend
+
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: frontend
+
+          topologyKey: kubernetes.io/hostname
+
+  containers:
+    - name: frontend
+      image: frontend:16
+
+---
+
+#node-1
+#├── backend
+#└── redis
+
+#а вот так хочется
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: backend
+
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: redis
+
+          topologyKey: kubernetes.io/hostname
+
+  containers:
+    - name: backend
+      image: backend:16
+
+
+#правила:
+# Node Affinity, Pod → «Хочу Node с такими labels»
+# Pod Affinity, Pod → «Хочу быть рядом с такими Pod'ами»
+# Pod Anti-Affinity, Pod → «Не хочу быть рядом с такими Pod'ами»

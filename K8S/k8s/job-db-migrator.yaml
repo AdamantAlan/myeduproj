@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: db-migration
+
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 600
+  ttlSecondsAfterFinished: 3600
+  
+  completions: 5
+  parallelism: 2
+
+  template:
+    spec:
+      containers:
+        - name: migration
+          image: myapp-migration:1.0
+
+          command:
+            - dotnet
+            - MyApp.Migrations.dll
+      
+      
+      restartPolicy: Never
