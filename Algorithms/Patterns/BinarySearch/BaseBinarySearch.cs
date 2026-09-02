@@ -6,7 +6,7 @@
     internal class BaseBinarySearch
     {
         /// <summary>
-        /// Найти индекс числа target
+        /// Найти индекс числа target последнего вхождения
         /// </summary>
         public int GetIndex(int[] nums, int target)
         {
@@ -18,15 +18,14 @@
                 var half = left + (right - left) / 2;
                 var halfNum = nums[half];
 
-                if (halfNum == target) 
-                    return half; 
-                else if (halfNum > target) 
+                if (halfNum > target) 
                     right = half;
                 else 
                     left = half;
             }
 
-            return -1;
+
+            return nums[left] == target ? left : -1;
         }
     }
 }

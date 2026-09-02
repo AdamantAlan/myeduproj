@@ -1,4 +1,6 @@
-﻿namespace Algorithms.Patterns.BinarySearch
+﻿using System;
+
+namespace Algorithms.Patterns.BinarySearch
 {
     /// <summary>
     /// Двойной бинарный поиск O(log(n))
@@ -16,16 +18,13 @@
                 var half = left + (right - left) / 2;
                 var halfNum = nums[half];
 
-                if (nums[right] == target)
-                {
-                    first = right;
-                    break;
-                }
-                else if (halfNum < target)
+                if (halfNum < target)
                     left = half;
                 else
                     right = half;
             }
+
+            first = nums[right] == target ? right : -1;
 
             left = 0;
             right = nums.Length;
@@ -36,13 +35,12 @@
                 var half = left + (right - left) / 2;
                 var halfNum = nums[half];
 
-                if (halfNum == target)
-                    last = half;
-                else if (halfNum > target)
-                    right = half;
-                else
+                if (halfNum <= target)
                     left = half;
+                else
+                    right = half;
             }
+            last = nums[left] == target ? left : -1;
 
             return (first, last);
         }
