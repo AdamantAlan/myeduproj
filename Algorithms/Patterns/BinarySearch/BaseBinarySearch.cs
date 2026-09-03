@@ -18,10 +18,10 @@
                 var half = left + (right - left) / 2;
                 var halfNum = nums[half];
 
-                if (halfNum > target) 
-                    right = half;
-                else 
+                if (halfNum <= target)
                     left = half;
+                else
+                    right = half;
             }
 
 
