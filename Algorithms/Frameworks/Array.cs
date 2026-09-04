@@ -1,6 +1,6 @@
 ﻿namespace Algorithms.Frameworks
 {
-    internal class Array
+    internal class ArrayAlg
     {
         void Reverse(int[] nums)
         {
@@ -93,7 +93,7 @@
             return result;
         }
 
-        void QuickSort(int[] nums, int left, int right)
+        public static void QuickSort(int[] nums, int left, int right)
         {
             if (left >= right) 
                 return;
