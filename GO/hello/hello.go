@@ -9,18 +9,34 @@ import (
 type User = services.User
 
 func main() {
-	f := func(end string) {
-		fmt.Println(end)
+	var i *int = new(int(1))
+	fmt.Println(*i)
+
+	var user *User = new(User{Name: "Vasy"})
+	fmt.Println(user.IsAdmin)
+
+	*i = 30
+	fmt.Println(*i)
+	user.IsAdmin = true
+
+	fmt.Println(*i)
+	fmt.Println(user.IsAdmin)
+
+	arr := [5]int{1, 2, 3, 4, 5}
+
+	for i := 0; i < len(arr); i++ {
+		fmt.Println(arr[i])
 	}
 
-	defer f("End.")
+	for i, r := range arr {
+		fmt.Println(i, ",", r)
+	}
 
-	SetAdmitToDima()
-	PrintNumbers()
-	SwitchFmt(1)
-	SwitchFmt(2)
-	SwitchTrue(5)
-	SwitchTrue(99)
+	s := arr[0:3]
+
+	for i1, r1 := range s {
+		fmt.Println(i1, ",", r1)
+	}
 }
 
 func PrintNumbers() {
@@ -85,7 +101,7 @@ func SumNum(sum *int) {
 }
 
 func SetAdmitToDima() {
-	user := User{Name: "Dima", Age: 28, IsAdmin: false}
+	user := User{Name: "Dima", IsAdmin: false}
 	SetAdmin(&user)
 
 	fmt.Printf("User %v\n", user.Name)
