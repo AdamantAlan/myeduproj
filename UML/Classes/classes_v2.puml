@@ -1,0 +1,248 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =========================
+' Пользователи
+' =========================
+
+abstract class User {
+    -id: UUID
+    -name: String
+    -email: String
+    -createdAt: DateTime
+
+    +changeName(name: String): void
+    +changeEmail(email: String): void
+}
+
+class Customer {
+    -phone: String
+
+    +createOrder(): Order
+    +addAddress(address: Address): void
+}
+
+class Admin {
+    -role: String
+
+    +blockCustomer(customerId: UUID): void
+    +cancelOrder(orderId: UUID): void
+}
+
+User <|-- Customer
+User <|-- Admin
+
+
+' =========================
+' Адрес
+' =========================
+
+class Address {
+    -city: String
+    -street: String
+    -house: String
+    -apartment: String
+    -postalCode: String
+
+    +getFullAddress(): String
+}
+
+Customer "1" o-- "0..*" Address : addresses
+
+
+' =========================
+' Заказ
+' =========================
+
+class Order {
+    -id: UUID
+    -createdAt: DateTime
+    -status: OrderStatus
+    -totalAmount: Decimal
+
+    +addItem(product: Product, quantity: Integer): void
+    +removeItem(productId: UUID): void
+    +calculateTotal(): Decimal
+    +applyPromoCode(promoCode: PromoCode): void
+    +confirm(): void
+    +cancel(): void
+}
+
+enum OrderStatus {
+    Draft
+    AwaitingPayment
+    Paid
+    Processing
+    Shipped
+    Completed
+    Cancelled
+}
+
+Customer "1" -- "0..*" Order : places >
+
+
+' =========================
+' Позиции заказа
+' =========================
+
+class OrderItem {
+    -quantity: Integer
+    -unitPrice: Decimal
+
+    +changeQuantity(quantity: Integer): void
+    +calculateAmount(): Decimal
+}
+
+Order "1" *-- "1..*" OrderItem : contains >
+
+
+' =========================
+' Товары
+' =========================
+
+class Product {
+    -id: UUID
+    -name: String
+    -description: String
+    -price: Decimal
+    -isActive: Boolean
+
+    +changePrice(price: Decimal): void
+    +activate(): void
+    +deactivate(): void
+}
+
+class Category {
+    -id: UUID
+    -name: String
+    -description: String
+
+    +rename(name: String): void
+}
+
+OrderItem "0..*" --> "1" Product : product >
+Category "0..*" -- "0..*" Product : contains >
+
+
+' =========================
+' Промокоды
+' =========================
+
+class PromoCode {
+    -id: UUID
+    -code: String
+    -discountPercent: Decimal
+    -validFrom: DateTime
+    -validTo: DateTime
+    -isActive: Boolean
+
+    +isValid(date: DateTime): Boolean
+    +calculateDiscount(amount: Decimal): Decimal
+}
+
+Order "0..*" --> "0..1" PromoCode : uses >
+
+
+' =========================
+' Оплата
+' =========================
+
+abstract class Payment {
+    -id: UUID
+    -amount: Decimal
+    -status: PaymentStatus
+    -createdAt: DateTime
+
+    +process(): void
+    +markSuccessful(): void
+    +markFailed(): void
+    +refund(): void
+}
+
+class CardPayment {
+    -maskedCardNumber: String
+    -transactionId: String
+
+    +process(): void
+}
+
+class SBPPayment {
+    -qrId: String
+    -transactionId: String
+
+    +process(): void
+}
+
+enum PaymentStatus {
+    Created
+    Processing
+    Successful
+    Failed
+    Refunded
+}
+
+Payment <|-- CardPayment
+Payment <|-- SBPPayment
+
+Order "1" -- "0..*" Payment : payments >
+
+
+' =========================
+' Внешний платежный провайдер
+' =========================
+
+interface PaymentProvider {
+    +pay(amount: Decimal): PaymentResult
+    +refund(transactionId: String): Boolean
+}
+
+class BankPaymentProvider {
+    +pay(amount: Decimal): PaymentResult
+    +refund(transactionId: String): Boolean
+}
+
+PaymentProvider <|.. BankPaymentProvider
+
+CardPayment ..> PaymentProvider : uses
+SBPPayment ..> PaymentProvider : uses
+
+
+' =========================
+' Результат платежа
+' =========================
+
+class PaymentResult {
+    -success: Boolean
+    -transactionId: String
+    -errorCode: String
+    -errorMessage: String
+}
+
+
+' =========================
+' Доставка
+' =========================
+
+class Delivery {
+    -id: UUID
+    -status: DeliveryStatus
+    -trackingNumber: String
+    -deliveryDate: DateTime
+
+    +ship(): void
+    +markDelivered(): void
+    +changeDeliveryDate(date: DateTime): void
+}
+
+enum DeliveryStatus {
+    Created
+    Preparing
+    Shipped
+    Delivered
+    Cancelled
+}
+
+Order "1" -- "0..1" Delivery : delivery >
+Delivery "1" --> "1" Address : destination >
+
+@enduml
