@@ -1,0 +1,73 @@
+@startuml
+
+class Customer {
+    id: UUID
+    name: String
+    email: String
+}
+
+class Order {
+    id: UUID
+    createdAt: DateTime
+    status: OrderStatus
+    totalAmount: Decimal
+}
+
+class OrderItem {
+    quantity: Integer
+    price: Decimal
+}
+
+class Product {
+    id: UUID
+    name: String
+    price: Decimal
+}
+
+class Category {
+    id: UUID
+    name: String
+}
+
+abstract class Payment {
+    id: UUID
+    amount: Decimal
+    status: PaymentStatus
+}
+
+class CardPayment {
+    maskedCardNumber: String
+}
+
+class SBPPayment {
+    qrId: String
+}
+
+enum OrderStatus {
+    Created
+    Paid
+    Processing
+    Shipped
+    Cancelled
+}
+
+enum PaymentStatus {
+    Created
+    Successful
+    Failed
+}
+
+Customer "1" -- "0..*" Order : places
+
+Order "1" *-- "1..*" OrderItem
+
+OrderItem "0..*" --> "1" Product
+
+Category "0..*" -- "0..*" Product
+
+Order "1" -- "0..*" Payment
+
+Payment <|-- CardPayment
+Payment <|-- SBPPayment
+
+@enduml
