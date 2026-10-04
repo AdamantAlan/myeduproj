@@ -1,0 +1,56 @@
+@startuml
+left to right direction
+
+actor "Пользователь" as User
+actor "Гость" as Guest
+actor "Авторизованный\nпокупатель" as Customer
+actor "VIP-покупатель" as VIP
+
+actor "Платёжная система" as Payment
+actor "Служба доставки" as Delivery
+
+' ===== Наследование акторов =====
+Guest --|> User
+Customer --|> User
+VIP --|> Customer
+
+rectangle "Интернет-магазин" {
+
+    usecase "Просмотреть каталог" as Catalog
+
+    usecase "Оформить заказ" as Order
+    usecase "Рассчитать стоимость" as Calculate
+    usecase "Выбрать доставку" as SelectDelivery
+
+    usecase "Оплатить заказ" as Pay
+    usecase "Оплатить картой" as PayCard
+    usecase "Оплатить через СБП" as PaySBP
+
+    usecase "Применить промокод" as Promo
+
+    usecase "Просмотреть историю\nзаказов" as History
+    usecase "Отследить заказ" as Track
+    usecase "Отменить заказ" as Cancel
+
+    Order ..> Calculate : <<include>>
+    Order ..> SelectDelivery : <<include>>
+
+    Promo ..> Order : <<extend>>
+
+    ' ===== Наследование Use Case =====
+    PayCard --|> Pay
+    PaySBP --|> Pay
+}
+
+User --> Catalog
+
+Customer --> Order
+Customer --> Pay
+Customer --> History
+Customer --> Track
+Customer --> Cancel
+
+Payment --> Pay
+Delivery --> Track
+
+@enduml
