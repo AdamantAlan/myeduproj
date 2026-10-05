@@ -1,0 +1,211 @@
+@startuml
+
+hide circle
+skinparam linetype ortho
+
+' ==================================================
+' USERS
+' ==================================================
+
+entity "User" as user {
+    * id : UUID <<PK>>
+    --
+    * email : varchar(255) <<UQ>>
+    * name : varchar(200)
+    * created_at : timestamp
+    status : varchar(30)
+}
+
+entity "Address" as address {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>>
+    * city : varchar(100)
+    * street : varchar(200)
+    * house : varchar(20)
+    apartment : varchar(20)
+    * postal_code : varchar(20)
+}
+
+' ==================================================
+' PRODUCTS
+' ==================================================
+
+entity "Product" as product {
+    * id : UUID <<PK>>
+    --
+    * name : varchar(255)
+    description : text
+    * price : decimal(12,2)
+    * stock_quantity : int
+    * status : varchar(30)
+    * created_at : timestamp
+}
+
+entity "Category" as category {
+    * id : UUID <<PK>>
+    --
+    * name : varchar(150)
+    parent_id : UUID <<FK>>
+}
+
+entity "ProductCategory" as productCategory {
+    * product_id : UUID <<PK, FK>>
+    * category_id : UUID <<PK, FK>>
+}
+
+' ==================================================
+' ORDERS
+' ==================================================
+
+entity "Order" as order {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>>
+    * delivery_address_id : UUID <<FK>>
+    promo_code_id : UUID <<FK>>
+    * status : varchar(30)
+    * total_amount : decimal(12,2)
+    * created_at : timestamp
+}
+
+entity "OrderItem" as orderItem {
+    * order_id : UUID <<PK, FK>>
+    * line_number : int <<PK>>
+    --
+    * product_id : UUID <<FK>>
+    * product_name : varchar(255)
+    * quantity : int
+    * unit_price : decimal(12,2)
+    * total_price : decimal(12,2)
+}
+
+' ==================================================
+' PAYMENTS
+' ==================================================
+
+entity "Payment" as payment {
+    * id : UUID <<PK>>
+    --
+    * order_id : UUID <<FK>>
+    * amount : decimal(12,2)
+    * method : varchar(30)
+    * status : varchar(30)
+    transaction_id : varchar(100)
+    * created_at : timestamp
+    paid_at : timestamp
+}
+
+' ==================================================
+' DELIVERY
+' ==================================================
+
+entity "Shipment" as shipment {
+    * id : UUID <<PK>>
+    --
+    * order_id : UUID <<FK>>
+    * status : varchar(30)
+    tracking_number : varchar(100)
+    * created_at : timestamp
+    shipped_at : timestamp
+    delivered_at : timestamp
+}
+
+' ==================================================
+' PROMO CODES
+' ==================================================
+
+entity "PromoCode" as promo {
+    * id : UUID <<PK>>
+    --
+    * code : varchar(50) <<UQ>>
+    * discount_percent : decimal(5,2)
+    * valid_from : timestamp
+    * valid_to : timestamp
+    * usage_limit : int
+}
+
+' ==================================================
+' REVIEWS
+' ==================================================
+
+entity "Review" as review {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>>
+    * product_id : UUID <<FK>>
+    * rating : int
+    comment : text
+    * created_at : timestamp
+}
+
+' ==================================================
+' RELATIONSHIPS
+' ==================================================
+
+' User 1 -> 0..N Address
+user ||--o{ address : has
+
+' User 1 -> 0..N Order
+user ||--o{ order : places
+
+' Address 1 -> 0..N Order
+address ||--o{ order : "delivery address"
+
+' Order 1 -> 1..N OrderItem
+order ||--|{ orderItem : contains
+
+' Product 1 -> 0..N OrderItem
+product ||--o{ orderItem : "ordered as"
+
+' ==================================================
+' PRODUCT <-> CATEGORY
+' N:M through ProductCategory
+' ==================================================
+
+product ||--o{ productCategory : categories
+category ||--o{ productCategory : products
+
+' ==================================================
+' CATEGORY HIERARCHY
+'
+' Category can have:
+' 0..1 parent
+' 0..N children
+' ==================================================
+
+category |o--o{ category : "parent / children"
+
+' ==================================================
+' PAYMENTS
+' ==================================================
+
+' Order 1 -> 0..N Payment
+order ||--o{ payment : payments
+
+' ==================================================
+' SHIPMENTS
+' ==================================================
+
+' Order 1 -> 0..N Shipment
+order ||--o{ shipment : shipments
+
+' ==================================================
+' PROMO CODES
+' ==================================================
+
+' Order can have 0..1 PromoCode
+' PromoCode can be used by 0..N Orders
+promo |o--o{ order : "applied to"
+
+' ==================================================
+' REVIEWS
+' ==================================================
+
+' User 1 -> 0..N Review
+user ||--o{ review : writes
+
+' Product 1 -> 0..N Review
+product ||--o{ review : receives
+
+@enduml

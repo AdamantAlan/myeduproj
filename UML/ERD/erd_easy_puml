@@ -1,0 +1,28 @@
+@startuml
+
+entity User {
+    * Id : uuid <<PK>>
+    --
+    Name : varchar
+    Email : varchar
+}
+
+entity Order {
+    * Id : uuid <<PK>>
+    --
+    UserId : uuid <<FK>>
+    CreatedAt : timestamp
+}
+
+entity OrderItem {
+    * Id : uuid <<PK>>
+    --
+    OrderId : uuid <<FK>>
+    ProductId : uuid <<FK>>
+    Quantity : int
+}
+
+User ||--o{ Order : places
+Order ||--|{ OrderItem : contains
+
+@enduml
