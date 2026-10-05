@@ -32,7 +32,7 @@
                 }
             }
 
-            return slow + 1;
+            return slow++;
         }
 
         int RemoveDuplicates(int[] nums)
@@ -44,8 +44,8 @@
             {
                 if (seen.Add(nums[fast]))
                 {
-                    nums[slow] = nums[fast];
                     slow++;
+                    nums[slow] = nums[fast];
                 }
             }
 
