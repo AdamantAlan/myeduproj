@@ -2,13 +2,33 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
-func main() {
-	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello")
-	})
+type CreateUserRequest struct {
+	Name  string `validate:"required,min=2,max=50"`
+	Email string `validate:"required,email"`
+	Age   int    `validate:"gte=18,lte=100"`
+}
 
-	http.ListenAndServe(":8080", nil)
+func main() {
+	validate := validator.New()
+
+	req := CreateUserRequest{
+		Name:  "D",
+		Email: "wrong",
+		Age:   15,
+	}
+
+	err := validate.Struct(req)
+	if err != nil {
+		for _, e := range err.(validator.ValidationErrors) {
+			fmt.Println(
+				e.Field(),
+				e.Tag(),
+				e.Param(),
+			)
+		}
+	}
 }
