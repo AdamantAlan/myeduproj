@@ -1,0 +1,14 @@
+@startuml
+actor Клиент
+participant Система
+participant "Email Service" as Email
+
+Клиент -> Система : Оформить заказ
+
+opt Клиент указал email
+    Система -> Email : Отправить подтверждение
+    Email --> Система : Отправлено
+end
+
+Система --> Клиент : Заказ оформлен
+@enduml

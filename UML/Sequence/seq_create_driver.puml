@@ -1,0 +1,28 @@
+@startuml
+
+actor Клиент
+participant "Система бронирования" as Booking
+participant "Сервис водителей" as DriverService
+
+Клиент -> Booking : Забронировать поездку
+activate Booking
+
+Booking -> DriverService : Найти водителя
+activate DriverService
+
+DriverService --> Booking : Водитель найден
+deactivate DriverService
+
+create participant Водитель
+Booking -> Водитель : <<create>>
+activate Водитель
+
+Booking -> Водитель : Назначить поездку
+Водитель --> Booking : Поездка принята
+
+deactivate Водитель
+
+Booking --> Клиент : Бронирование подтверждено
+deactivate Booking
+
+@enduml

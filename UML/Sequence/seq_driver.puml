@@ -1,0 +1,50 @@
+@startuml
+title Бронирование поездки
+
+actor Клиент
+participant "Система бронирования" as Booking
+participant "Сервис водителей" as DriverService
+participant Водитель
+
+Клиент -> Booking : Запрос бронирования
+activate Booking
+
+Booking -> DriverService : Проверить доступность водителей
+activate DriverService
+
+DriverService --> Booking : Доступные водители
+deactivate DriverService
+
+alt Водитель доступен
+    Booking -> DriverService : Назначить водителя
+    activate DriverService
+
+    DriverService -> Водитель : Предложить поездку
+    activate Водитель
+    Водитель --> DriverService : Подтверждение
+    deactivate Водитель
+
+    DriverService --> Booking : Водитель назначен
+    deactivate DriverService
+
+    Booking --> Клиент : Бронирование подтверждено
+
+else Водителей нет
+    Booking --> Клиент : Нет доступных водителей
+end
+
+deactivate Booking
+
+opt Клиент отменяет бронирование
+    Клиент -> Booking : Отменить бронирование
+    activate Booking
+
+    Booking -> DriverService : Отменить назначение
+    DriverService -> Водитель : Уведомить об отмене
+    DriverService --> Booking : Назначение отменено
+
+    Booking --> Клиент : Бронирование отменено
+    deactivate Booking
+end
+
+@enduml

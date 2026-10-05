@@ -1,0 +1,15 @@
+@startuml
+participant Система
+participant "Email Service" as Email
+participant "SMS Service" as SMS
+participant "Analytics" as Analytics
+
+par Отправка Email
+    Система -> Email : Отправить письмо
+else Отправка SMS
+    Система -> SMS : Отправить SMS
+else Отправка события
+    Система -> Analytics : OrderCreated
+end
+
+@enduml

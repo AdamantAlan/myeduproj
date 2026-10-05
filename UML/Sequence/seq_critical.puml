@@ -1,0 +1,11 @@
+@startuml
+participant OrderService
+database DB
+
+critical Изменение остатка
+    OrderService -> DB : Проверить остаток
+    DB --> OrderService : Остаток = 1
+    OrderService -> DB : Зарезервировать товар
+end
+
+@enduml

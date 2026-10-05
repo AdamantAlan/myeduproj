@@ -1,0 +1,21 @@
+@startuml
+title Авторизация пользователя
+
+actor Клиент
+participant "Order Service" as Order
+participant "Auth Service" as Auth
+database "User DB" as DB
+
+Клиент -> Order : Запрос с JWT
+Order -> Auth : Проверить токен
+Auth -> DB : Получить пользователя
+DB --> Auth : Пользователь
+
+alt Токен валиден
+    Auth --> Order : Пользователь авторизован
+else Токен невалиден
+    Auth --> Order : 401 Unauthorized
+    Order --> Клиент : 401 Unauthorized
+end
+
+@enduml
