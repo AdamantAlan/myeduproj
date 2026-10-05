@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Tests.Grpc";
+
+package order;
+
+service OrderService {
+  rpc GetOrder (GetOrderRequest) returns (GetOrderResponse);
+}
+
+message GetOrderRequest {
+  int64 id = 1;
+}
+
+message GetOrderResponse {
+  int64 id = 1;
+  string status = 2;
+}
