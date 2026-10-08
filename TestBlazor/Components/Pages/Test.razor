@@ -1,0 +1,20 @@
+﻿@page "/test"
+@using TestBlazor.Components.Layout
+@layout MyLayout
+@rendermode InteractiveServer
+<h1>Тестовая страница</h1>
+
+<p>Это содержимое нашей страницы.</p>
+
+<button @onclick="Increment">
+    Счётчик: @count
+</button>
+
+@code {
+    private int count;
+
+    private void Increment()
+    {
+        count++;
+    }
+}

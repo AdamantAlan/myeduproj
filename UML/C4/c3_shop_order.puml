@@ -1,0 +1,56 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title C3 — Component Diagram — Order Service
+
+Container_Ext(gateway, "API Gateway", "ASP.NET Core", "Принимает запросы от клиентов")
+
+Container_Ext(catalog, "Catalog Service", "ASP.NET Core", "Предоставляет информацию о товарах")
+
+ContainerDb_Ext(orderDb, "Order DB", "PostgreSQL", "Заказы, позиции заказов и Outbox")
+
+ContainerQueue_Ext(kafka, "Kafka", "Apache Kafka", "Шина событий")
+
+Container_Boundary(orderService, "Order Service") {
+
+    Component(controller, "Order Controller", "ASP.NET Core Controller", "Принимает HTTP-запросы для работы с заказами")
+
+    Component(createHandler, "Create Order Handler", "Application Component", "Обрабатывает команду создания заказа")
+
+    Component(getHandler, "Get Order Handler", "Application Component", "Получает информацию о заказе")
+
+    Component(domainService, "Order Domain Service", "Domain Service", "Содержит бизнес-правила оформления заказа")
+
+    Component(repository, "Order Repository", "Repository", "Сохраняет и получает заказы")
+
+    Component(catalogClient, "Catalog Client", "HTTP Client", "Получает информацию о товарах из Catalog Service")
+
+    Component(outboxRepository, "Outbox Repository", "Repository", "Сохраняет интеграционные события в Outbox")
+
+    Component(outboxPublisher, "Outbox Publisher", "Background Worker", "Публикует необработанные события Outbox в Kafka")
+}
+
+Rel(gateway, controller, "Вызывает", "HTTPS/REST")
+
+Rel(controller, createHandler, "Передает CreateOrder")
+Rel(controller, getHandler, "Передает GetOrder")
+
+Rel(createHandler, domainService, "Использует")
+Rel(createHandler, catalogClient, "Получает товары и цены")
+Rel(createHandler, repository, "Сохраняет заказ")
+Rel(createHandler, outboxRepository, "Сохраняет OrderCreated")
+
+Rel(getHandler, repository, "Получает заказ")
+
+Rel(domainService, repository, "Получает необходимые данные")
+
+Rel(repository, orderDb, "Читает и записывает", "SQL")
+Rel(outboxRepository, orderDb, "Записывает события", "SQL")
+
+Rel(catalogClient, catalog, "Запрашивает товары", "HTTPS/REST")
+
+Rel(outboxPublisher, orderDb, "Получает необработанные события", "SQL")
+Rel(outboxPublisher, kafka, "Публикует OrderCreated", "Kafka")
+
+@enduml

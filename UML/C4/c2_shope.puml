@@ -1,0 +1,66 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title C2 — Container Diagram — Интернет-магазин
+
+Person(customer, "Покупатель", "Покупатель интернет-магазина")
+
+System_Ext(paymentSystem, "Платежная система", "Обрабатывает платежи")
+System_Ext(deliverySystem, "Служба доставки", "Доставляет заказы")
+System_Ext(notificationSystem, "Сервис уведомлений", "Отправляет Email и SMS")
+
+System_Boundary(shop, "Интернет-магазин") {
+
+    Container(web, "Web Application", "React", "Пользовательский интерфейс интернет-магазина")
+
+    Container(gateway, "API Gateway", "ASP.NET Core", "Единая точка входа для клиентских запросов")
+
+    Container(catalog, "Catalog Service", "ASP.NET Core", "Управляет товарами, категориями и остатками")
+
+    Container(order, "Order Service", "ASP.NET Core", "Создает заказы и управляет их жизненным циклом")
+
+    Container(payment, "Payment Service", "ASP.NET Core", "Управляет процессом оплаты")
+
+    Container(delivery, "Delivery Service", "ASP.NET Core", "Организует доставку заказов")
+
+    Container(worker, "Notification Worker", ".NET Worker Service", "Обрабатывает события и отправляет уведомления")
+
+    ContainerDb(catalogDb, "Catalog DB", "PostgreSQL", "Товары, категории и остатки")
+
+    ContainerDb(orderDb, "Order DB", "PostgreSQL", "Заказы и позиции заказов")
+
+    ContainerDb(paymentDb, "Payment DB", "PostgreSQL", "Платежи и их статусы")
+
+    ContainerDb(redis, "Redis", "Redis", "Кэш каталога")
+
+    ContainerQueue(kafka, "Kafka", "Apache Kafka", "Асинхронные события между сервисами")
+}
+
+Rel(customer, web, "Использует", "HTTPS")
+
+Rel(web, gateway, "Вызывает API", "HTTPS/JSON")
+
+Rel(gateway, catalog, "Получает каталог", "REST")
+Rel(gateway, order, "Работает с заказами", "REST")
+Rel(gateway, payment, "Инициирует оплату", "REST")
+
+Rel(catalog, catalogDb, "Читает и изменяет", "SQL")
+Rel(catalog, redis, "Читает и записывает кэш", "RESP")
+
+Rel(order, orderDb, "Читает и изменяет", "SQL")
+Rel(order, catalog, "Проверяет товары и остатки", "REST")
+Rel(order, kafka, "Публикует OrderCreated", "Kafka")
+
+Rel(payment, paymentDb, "Читает и изменяет", "SQL")
+Rel(payment, paymentSystem, "Создает платеж", "HTTPS/REST")
+Rel(payment, kafka, "Публикует PaymentSucceeded / PaymentFailed", "Kafka")
+
+Rel(delivery, kafka, "Получает PaymentSucceeded", "Kafka")
+Rel(delivery, deliverySystem, "Создает доставку", "HTTPS/REST")
+Rel(delivery, kafka, "Публикует DeliveryStatusChanged", "Kafka")
+
+Rel(kafka, worker, "Получает события", "Kafka")
+Rel(worker, notificationSystem, "Отправляет уведомления", "HTTPS/REST")
+
+@enduml

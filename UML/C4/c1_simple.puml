@@ -1,0 +1,15 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(customer, "Клиент", "Пользователь интернет-магазина")
+
+System(shop, "Интернет-магазин", "Позволяет искать и покупать товары")
+
+System_Ext(payment, "Платежная система", "Обрабатывает платежи")
+
+Rel(customer, shop, "Использует")
+
+Rel(shop, payment, "Проводит платежи")
+
+@enduml

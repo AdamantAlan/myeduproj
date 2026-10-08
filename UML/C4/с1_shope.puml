@@ -1,0 +1,26 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title C1 — System Context — Интернет-магазин
+
+Person(customer, "Покупатель", "Ищет товары, оформляет и оплачивает заказы")
+
+Person(admin, "Администратор", "Управляет товарами, категориями и заказами")
+
+System(shop, "Интернет-магазин", "Позволяет выбирать товары, оформлять заказы и отслеживать их выполнение")
+
+System_Ext(payment, "Платежная система", "Принимает и обрабатывает платежи")
+
+System_Ext(delivery, "Служба доставки", "Принимает заявки на доставку и сообщает статус доставки")
+
+System_Ext(notification, "Сервис уведомлений", "Отправляет Email и SMS")
+
+Rel(customer, shop, "Использует", "HTTPS")
+Rel(admin, shop, "Управляет магазином", "HTTPS")
+
+Rel(shop, payment, "Проводит платежи", "HTTPS/REST")
+Rel(shop, delivery, "Создает заявки на доставку", "HTTPS/REST")
+Rel(shop, notification, "Отправляет уведомления", "HTTPS/REST")
+
+@enduml
