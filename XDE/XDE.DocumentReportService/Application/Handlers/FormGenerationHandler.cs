@@ -21,7 +21,7 @@ internal class FormGenerationHandler(PrintFormGeneratorContext formGeneratorCont
         return MapToResponse(documentsByPackage).ToArray();
     }
 
-    private IEnumerable<Document> MapToDocuments(IReadOnlyCollection<GenerateFormsCommand> generateFormsCommand)
+    private IEnumerable<Document> MapToDocuments(IEnumerable<GenerateFormsCommand> generateFormsCommand)
     {
         return generateFormsCommand
                      .Select(f => new Document()
@@ -33,7 +33,7 @@ internal class FormGenerationHandler(PrintFormGeneratorContext formGeneratorCont
                      });
     }
 
-    private Dictionary<int, DocumentInPackage[]> GroupDocumentsByPackage(IEnumerable<Document> documents)
+    private Dictionary<int, DocumentPackage> GroupDocumentsByPackage(IEnumerable<Document> documents)
     {
         return documents
             .Where(d => d.PackageId.HasValue)
@@ -41,26 +41,30 @@ internal class FormGenerationHandler(PrintFormGeneratorContext formGeneratorCont
             .GroupBy(d => d.PackageId!.Value)
             .ToDictionary(
                 g => g.Key,
-                g => g.Select(d =>
+                g => new DocumentPackage()
                 {
-                    var form = formGeneratorContext.GetOrDefault(d.DocumentType);
-                    return new DocumentInPackage
+                    PackageId = g.Key,
+                    Documents = g.Select(d =>
                     {
-                        DocumentId = d.Id,
-                        DocumentType = d.DocumentType,
-                        Title = d.Title,
-                        PrintForm = form?.GeneratePrintForm(d)!
-                    };
-                }).ToArray()
+                        var form = formGeneratorContext.GetOrDefault(d.DocumentType);
+                        return new DocumentInPackage
+                        {
+                            DocumentId = d.Id,
+                            DocumentType = d.DocumentType,
+                            Title = d.Title,
+                            PrintForm = form?.GeneratePrintForm(d)!
+                        };
+                    }).ToArray()
+                }
             );
     }
 
-    private IEnumerable<GenerateFormsResponse> MapToResponse(Dictionary<int, DocumentInPackage[]> documentsByPackage)
+    private IEnumerable<GenerateFormsResponse> MapToResponse(Dictionary<int, DocumentPackage> documentsByPackage)
     {
         return documentsByPackage.Select(kvp => new GenerateFormsResponse
         {
             PackageId = kvp.Key,
-            DocumentIds = kvp.Value.Select(d => d.DocumentId)
+            DocumentIds = kvp.Value.Documents.Select(d => d.DocumentId)
         }).ToArray();
     }
 }
