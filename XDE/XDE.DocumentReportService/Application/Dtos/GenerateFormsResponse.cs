@@ -1,4 +1,4 @@
-﻿namespace XDE.DocumentReportService.Application.Dto
+﻿namespace XDE.DocumentReportService.Application.Dtos
 {
     public sealed class GenerateFormsResponse
     {

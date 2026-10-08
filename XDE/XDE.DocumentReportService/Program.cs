@@ -1,14 +1,17 @@
 using Microsoft.OpenApi;
-using XDE.DocumentReportService.Application.Handler;
-using XDE.DocumentReportService.Application.Interface;
-using XDE.DocumentReportService.Application.Service;
+using XDE.DocumentReportService.Application.Handlers;
+using XDE.DocumentReportService.Application.Abstractions;
+using XDE.DocumentReportService.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddScoped<IFormGenerationHandler, FormGenerationHandler>();
+
 builder.Services.AddSingleton<PrintFormGenerator>();
+builder.Services.AddSingleton<InvoicePrintFormGenerator>();
+builder.Services.AddSingleton<PrintFormGeneratorContext>();
 
 builder.Services.AddControllers();
 

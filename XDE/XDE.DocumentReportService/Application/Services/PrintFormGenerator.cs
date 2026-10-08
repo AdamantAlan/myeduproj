@@ -1,11 +1,14 @@
-﻿using XDE.DocumentReportService.Domain;
+﻿using XDE.DocumentReportService.Application.Abstractions;
+using XDE.DocumentReportService.Application.Attributes;
+using XDE.DocumentReportService.Domain;
 
-namespace XDE.DocumentReportService.Application.Service;
+namespace XDE.DocumentReportService.Application.Services;
 
 /// <summary>
 /// Представляет генератор печатных форм документов.
 /// </summary>
-public sealed class PrintFormGenerator
+[DocumentType("ORDER")]
+internal sealed class PrintFormGenerator : IPrintFormGenerator
 {
     /// <summary>
     /// Генерирует печатную форму документа.

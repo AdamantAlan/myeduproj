@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using XDE.DocumentReportService.Application.Dto;
-using XDE.DocumentReportService.Application.Interface;
+using XDE.DocumentReportService.Application.Dtos;
+using XDE.DocumentReportService.Application.Abstractions;
 
 namespace XDE.DocumentReportService.Api;
 
