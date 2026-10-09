@@ -7,21 +7,21 @@ namespace XDE.DocumentReportService.Infrastructure;
 /// </summary>
 public sealed class ExternalSystemConnector
 {
-    /// <summary>
-    /// Выполняет отправку документов во внешнюю систему.
-    /// </summary>
-    /// <param name="documents">
-    /// Документы, которые нужно отправить.
-    /// </param>
-    /// <param name="cancellationToken">
-    /// <see cref="CancellationToken"/> для отмены асинхронной операции.
-    /// </param>
-    /// <returns>
-    /// Асинхронная операция, завершение которой означает успешную отправку документов.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Возникакет при попытке отправить более 10 документов за раз.
-    /// </exception>
+    /// <summary>
+    /// Выполняет отправку документов во внешнюю систему.
+    /// </summary>
+    /// <param name="documents">
+    /// Документы, которые нужно отправить.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// <see cref="CancellationToken"/> для отмены асинхронной операции.
+    /// </param>
+    /// <returns>
+    /// Асинхронная операция, завершение которой означает успешную отправку документов.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Возникает при попытке отправить более 10 документов за раз.
+    /// </exception>
     public async Task SendDocumentsAsync(IReadOnlyCollection<Document> documents, CancellationToken cancellationToken)
     {
         if (documents.Count > 10)

@@ -7,18 +7,18 @@ namespace XDE.DocumentReportService.Application.Abstractions;
 /// </summary>
 public interface IPrintFormGenerator
 {
-    /// <summary>
-    /// Генерирует печатную форму документа.
-    /// </summary>
-    /// <param name="document">
-    /// Документ, для которого нужно сгенерировать печатную форму.
-    /// </param>
-    /// <returns>
-    /// Печатная форма документа (PDF, сериализованный в массив байт).
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Возникакет в том случае, если эта реализация не умеет генерировать
-    /// печатную форму для переданного типа документов.
-    /// </exception>
-    byte[] GeneratePrintForm(Document document);
+    /// <summary>
+    /// Генерирует печатную форму документа.
+    /// </summary>
+    /// <param name="document">
+    /// Документ, для которого нужно сгенерировать печатную форму.
+    /// </param>
+    /// <returns>
+    /// Печатная форма документа (PDF, сериализованный в массив байт).
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Возникает в том случае, если эта реализация не умеет генерировать
+    /// печатную форму для переданного типа документов.
+    /// </exception>
+    byte[] GeneratePrintForm(Document document);
 }

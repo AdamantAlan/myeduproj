@@ -4,21 +4,53 @@ using XDE.DocumentReportService.Domain;
 
 namespace XDE.DocumentReportService.Infrastructure;
 
+/// <summary>
+/// Очередь документов для фоновой отправки во внешнюю систему.
+/// </summary>
+/// <remarks>
+/// Документы накапливаются в очереди и отправляются пакетами
+/// размером до 10 элементов с заданным интервалом.
+/// 
+/// Обработка выполняется в фоновой асинхронной задаче.
+/// Информация о результатах отправки передаётся через
+/// <see cref="IProgress{DocumentQueueProgress}"/>.
+///
+/// При освобождении ресурсов обработка останавливается.
+/// Документы, оставшиеся в очереди, не отправляются.
+/// </remarks>
 internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
 {
-    private readonly int batchSize = 10;
-    private readonly ConcurrentQueue<Document> documentsQueue = new();
+    private const int BATCH_SIZE = 10;
+    private readonly ConcurrentQueue<Document> queue = new();
     private readonly CancellationTokenSource cst = new();
     private readonly PeriodicTimer periodicTimer;
-    private readonly Task worker;
+    private readonly Task processingTask;
     private readonly Lock sync = new();
-    private int sentDocumentsCount;
+    private int sentDocumentCount;
     private bool disposed;
     private Task? disposeTask;
 
     private readonly ExternalSystemConnector externalSystemConnector;
     private readonly IProgress<DocumentQueueProgress> progress;
 
+    /// <summary>
+    /// Создаёт очередь документов и запускает фоновую обработку.
+    /// </summary>
+    /// <param name="externalSystemConnector">
+    /// Коннектор для отправки документов во внешнюю систему.
+    /// </param>
+    /// <param name="progress">
+    /// Получатель уведомлений о ходе отправки документов.
+    /// </param>
+    /// <param name="tick">
+    /// Интервал между попытками обработки очереди.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Коннектор или получатель уведомлений не задан.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Интервал обработки меньше либо равен нулю.
+    /// </exception>
     internal DocumentQueue(ExternalSystemConnector externalSystemConnector,
         IProgress<DocumentQueueProgress> progress,
         TimeSpan tick)
@@ -33,9 +65,24 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
         this.progress = progress;
         periodicTimer = new PeriodicTimer(tick);
 
-        worker = ProcessQueueAsync(cst.Token);
+        processingTask = ProcessQueueAsync(cst.Token);
     }
 
+    /// <summary>
+    /// Добавляет документ в очередь для последующей отправки.
+    /// </summary>
+    /// <param name="document">
+    /// Документ, который необходимо отправить.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Документ не задан.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Идентификатор пакета некорректен или тип документа не поддерживается.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">
+    /// Очередь закрыта и больше не принимает документы.
+    /// </exception>
     public void Enqueue(Document document)
     {
         ValidateDocument(document);
@@ -43,10 +90,21 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
         lock (sync)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
-            documentsQueue.Enqueue(document);
+            queue.Enqueue(document);
         }
     }
 
+    /// <summary>
+    /// Останавливает фоновую обработку очереди и освобождает ресурсы.
+    /// </summary>
+    /// <remarks>
+    /// Отменяет выполняющуюся отправку и ожидает завершения
+    /// фоновой задачи. Не гарантирует отправку оставшихся документов.
+    /// Повторный вызов возвращает ожидание того же завершения.
+    /// </remarks>
+    /// <returns>
+    /// Задача, представляющая асинхронное освобождение ресурсов.
+    /// </returns>
     public ValueTask DisposeAsync()
     {
         lock (sync)
@@ -62,9 +120,19 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Периодически извлекает документы из очереди и отправляет их
+    /// во внешнюю систему пакетами.
+    /// </summary>
+    /// <param name="token">
+    /// Токен отмены фоновой обработки.
+    /// </param>
+    /// <returns>
+    /// Задача фоновой обработки очереди.
+    /// </returns>
     private async Task ProcessQueueAsync(CancellationToken token)
     {
-        List<Document> batchDocuments = default!;
+        List<Document> batchDocuments = null!;
 
         try
         {
@@ -72,19 +140,18 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
             {
                 try
                 {
-                    if (token.IsCancellationRequested)
-                        break;
+                    token.ThrowIfCancellationRequested();
 
-                    if (documentsQueue.Count is 0)
+                    if (queue.Count is 0)
                         continue;
 
                     batchDocuments = new List<Document>();
 
-                    if (!TryEnrichBatchDocuments(batchDocuments))
+                    if (!TryDequeueBatch(batchDocuments))
                         continue;
 
                     await externalSystemConnector.SendDocumentsAsync(batchDocuments, token);
-                    sentDocumentsCount += batchDocuments.Count;
+                    sentDocumentCount += batchDocuments.Count;
 
                     ReportProgressSuccess(batchDocuments);
 
@@ -121,10 +188,10 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
             throw new ArgumentException($"Unsupported document type: {document.DocumentType}", nameof(document));
     }
 
-    private bool TryEnrichBatchDocuments(List<Document> batchDocuments)
+    private bool TryDequeueBatch(List<Document> batchDocuments)
     {
-        while (batchDocuments.Count < batchSize &&
-                    documentsQueue.TryDequeue(out var document))
+        while (batchDocuments.Count < BATCH_SIZE &&
+                    queue.TryDequeue(out var document))
         {
             batchDocuments.Add(document);
         }
@@ -133,15 +200,15 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
 
     }
 
-    private string GetDisplayedDocumentIds(List<Document> batchDocuments)
+    private string FormatDocumentIds(List<Document> batchDocuments)
         => string.Join(',', batchDocuments.Select(d => d.Id));
 
     private void ReportProgressSuccess(List<Document> batchDocuments)
     {
-        var displayedDocumentIds = GetDisplayedDocumentIds(batchDocuments);
+        var displayedDocumentIds = FormatDocumentIds(batchDocuments);
 
-        progress.Report(new DocumentQueueProgress(SentCount: sentDocumentsCount,
-                    PendingCount: documentsQueue.Count,
+        progress.Report(new DocumentQueueProgress(SentCount: sentDocumentCount,
+                    PendingCount: queue.Count,
                     Message: $"Documents {displayedDocumentIds} sent documents to external system",
                     IsFailed: false,
                     ErrorMessage: null!));
@@ -149,10 +216,10 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
 
     private void ReportProgressFailed(List<Document> batchDocuments, string errorMessage)
     {
-        var displayedDocumentIds = GetDisplayedDocumentIds(batchDocuments);
+        var displayedDocumentIds = FormatDocumentIds(batchDocuments);
 
-        progress.Report(new DocumentQueueProgress(SentCount: sentDocumentsCount,
-                    PendingCount: documentsQueue.Count,
+        progress.Report(new DocumentQueueProgress(SentCount: sentDocumentCount,
+                    PendingCount: queue.Count,
                     Message: $"Documents {displayedDocumentIds} do not sent to external system.",
                     IsFailed: true,
                     ErrorMessage: errorMessage));
@@ -166,7 +233,7 @@ internal sealed class DocumentQueue : IDocumentsQueue, IAsyncDisposable
 
             try
             {
-                await worker;
+                await processingTask;
             }
             catch (OperationCanceledException) when (cst.IsCancellationRequested)
             {

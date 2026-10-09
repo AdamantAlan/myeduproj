@@ -4,6 +4,15 @@ using XDE.DocumentReportService.Application.Attributes;
 
 namespace XDE.DocumentReportService.Application.Services;
 
+/// <summary>
+/// Контекст генераторов печатных форм.
+/// Обеспечивает поиск генератора по типу документа.
+/// </summary>
+/// <remarks>
+/// Соответствие между типом документа и генератором определяется
+/// атрибутом <see cref="DocumentTypeAttribute"/>,
+/// указанным на классе реализации <see cref="IPrintFormGenerator"/>.
+/// </remarks>
 internal sealed class PrintFormGeneratorContext
 {
     private readonly Dictionary<string, IPrintFormGenerator> generators;
@@ -16,6 +25,16 @@ internal sealed class PrintFormGeneratorContext
             generator => generator);
     }
 
+    /// <summary>
+    /// Возвращает генератор печатной формы для указанного типа документа.
+    /// </summary>
+    /// <param name="documentType">
+    /// Тип документа, для которого требуется генератор.
+    /// </param>
+    /// <returns>
+    /// Генератор печатной формы или <see langword="null"/>,
+    /// если генератор для указанного типа не зарегистрирован.
+    /// </returns>
     internal IPrintFormGenerator? GetOrDefault(string documentType)
         => generators.GetValueOrDefault(documentType);
 }

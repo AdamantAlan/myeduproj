@@ -10,15 +10,15 @@ namespace XDE.DocumentReportService.Application.Services;
 [DocumentType("ORDER")]
 internal sealed class PrintFormGenerator : IPrintFormGenerator
 {
-    /// <summary>
-    /// Генерирует печатную форму документа.
-    /// </summary>
-    /// <param name="document">
-    /// Документ, для которого нужно сгенерировать печатную форму.
-    /// </param>
-    /// <returns>
-    /// Печатная форма документа (PDF, сериализованный в массив байт).
-    /// </returns>
+    /// <summary>
+    /// Генерирует печатную форму документа.
+    /// </summary>
+    /// <param name="document">
+    /// Документ, для которого нужно сгенерировать печатную форму.
+    /// </param>
+    /// <returns>
+    /// Печатная форма документа (PDF, сериализованный в массив байт).
+    /// </returns>
     public byte[] GeneratePrintForm(Document document)
     {
         // тестовая реализация, просто вернем массив байт нулевой длины

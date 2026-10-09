@@ -4,6 +4,9 @@ using XDE.DocumentReportService.Domain;
 
 namespace XDE.DocumentReportService.Application.Services;
 
+/// <summary>
+/// Генератор форм для документа с типом INVOICE
+/// </summary>
 [DocumentType("INVOICE")]
 internal sealed class InvoicePrintFormGenerator : IPrintFormGenerator
 {

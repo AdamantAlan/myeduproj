@@ -3,26 +3,18 @@ using XDE.DocumentReportService.Application.Handlers;
 using XDE.DocumentReportService.Application.Abstractions;
 using XDE.DocumentReportService.Application.Services;
 using XDE.DocumentReportService.Infrastructure;
+using XDE.DocumentReportService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IFormGenerationHandler, FormGenerationHandler>();
+builder.Services.AddScoped<ISendExternalSystemHandler, SendExternalSystemHandler>();
 
 builder.Services.AddSingleton<PrintFormGenerator>();
 builder.Services.AddSingleton<InvoicePrintFormGenerator>();
 builder.Services.AddSingleton<PrintFormGeneratorContext>();
-
 builder.Services.AddSingleton<ExternalSystemConnector>();
-builder.Services.AddSingleton<IProgress<DocumentQueueProgress>>(_ => 
-    new Progress<DocumentQueueProgress>(progress =>
-    {
-        Console.WriteLine($"Sent: {progress.SentCount}, Pending: {progress.PendingCount}, Message: {progress.Message}");
-    }));
 
-builder.Services.AddSingleton<IDocumentsQueue>(sp => 
-        new DocumentQueue(sp.GetRequiredService<ExternalSystemConnector>(),
-        sp.GetRequiredService<IProgress<DocumentQueueProgress>>(),
-        TimeSpan.FromSeconds(5)));
+builder.Services.AddDocumentQueue();
 
 builder.Services.AddControllers();
 
