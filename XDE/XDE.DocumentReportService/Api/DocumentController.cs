@@ -10,7 +10,7 @@ public class DocumentController(IFormGenerationHandler formGenerationHandler) : 
 {
     [HttpPost("forms")]
     public IReadOnlyCollection<GenerateFormsResponse> GenerateFormsAsync(
-        IReadOnlyCollection<GenerateFormsCommand> request)
+        IReadOnlyCollection<GenerateFormsCommand> request, CancellationToken cancellationToken)
     {
         return formGenerationHandler.HandleAsync(request);
     }

@@ -1,12 +1,11 @@
-﻿using XDE.DocumentReportService.Application.Abstractions;
-using XDE.DocumentReportService.Domain;
+﻿using XDE.DocumentReportService.Domain;
 
 namespace XDE.DocumentReportService.Infrastructure;
 
 /// <summary>
 /// Представляет коннектор для отправки документов во внешнюю систему.
 /// </summary>
-public sealed class ExternalSystemConnector : IExternalSystemConnector
+public sealed class ExternalSystemConnector
 {
     /// <summary>
     /// Выполняет отправку документов во внешнюю систему.

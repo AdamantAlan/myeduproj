@@ -5,32 +5,56 @@ using XDE.DocumentReportService.Domain;
 
 namespace XDE.DocumentReportService.Application.Handlers;
 
-internal class FormGenerationHandler(PrintFormGeneratorContext formGeneratorContext) : IFormGenerationHandler
+internal class FormGenerationHandler(PrintFormGeneratorContext formGeneratorContext,
+    IDocumentsQueue documentsQueue,
+    ILogger<FormGenerationHandler> logger) : IFormGenerationHandler
 {
     private readonly string[] allowedDocumentTypes = ["ORDER", "INVOICE"];
+
     public IReadOnlyCollection<GenerateFormsResponse> HandleAsync(
         IReadOnlyCollection<GenerateFormsCommand> generateFormsCommand)
     {
         var documents = MapToDocuments(generateFormsCommand);
 
+        //Задание 1+2.
         var documentsByPackage = GroupDocumentsByPackage(documents);
 
-        //что-то делаем с пакетами
-        //и возвращаем ответ
+        //Задание 3.
+        var documentsForExternalSystem = documents
+            .Where(d => d.PackageId.HasValue)
+            .Where(d => allowedDocumentTypes.Contains(d.DocumentType));
 
+        EnqueueDocumentsForExternalSystem(documentsForExternalSystem);
+
+        //response для нас, посмотреть, что группировка верная
         return MapToResponse(documentsByPackage).ToArray();
+    }
+
+    private void EnqueueDocumentsForExternalSystem(IEnumerable<Document> documents)
+    {
+        foreach (var document in documents)
+        {
+            try
+            {
+                documentsQueue.Enqueue(document);
+            }
+            catch (ObjectDisposedException e)
+            {
+                logger.LogInformation("Documents queue is closed");
+                break;
+            }
+        }
     }
 
     private IEnumerable<Document> MapToDocuments(IEnumerable<GenerateFormsCommand> generateFormsCommand)
     {
-        return generateFormsCommand
-                     .Select(f => new Document()
-                     {
-                         Id = f.Id,
-                         PackageId = f.PackageId,
-                         DocumentType = f.DocumentType,
-                         Title = f.Title
-                     });
+        return generateFormsCommand.Select(f => new Document()
+        {
+            Id = f.Id,
+            PackageId = f.PackageId,
+            DocumentType = f.DocumentType,
+            Title = f.Title
+        });
     }
 
     private Dictionary<int, DocumentPackage> GroupDocumentsByPackage(IEnumerable<Document> documents)
