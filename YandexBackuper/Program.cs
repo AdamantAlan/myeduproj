@@ -4,7 +4,7 @@
 //├── BackupService.cs
 //├── DownloadService.cs
 //└── Models.cs
-//Сначала зарегистрируй OAuth-приложение через Яндекс OAuth и
+//Сначала зарегистрируй OAuth-приложение через Яндекс OAuth https://oauth.yandex.ru/client/new и
 //предоставь ему разрешение на чтение Диска (cloud_api:disk.read). Получи токен для своего аккаунта.
 //https://oauth.yandex.ru/authorize?response_type=code&client_id=ТВОЙ_CLIENT_ID
 //запустить Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass и . .\asses_token.ps1
