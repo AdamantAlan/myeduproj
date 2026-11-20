@@ -1,0 +1,126 @@
+
+@startuml Marketplace_C2
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+SHOW_LEGEND()
+
+title High-load Marketplace — C4 Container Diagram (C2)
+
+Person(customer, "Customer", "Покупатель")
+
+System_Ext(psp, "Payment Provider", "Банковский эквайринг")
+System_Ext(msg, "Notification Provider", "SMS / Email / Push")
+
+System_Boundary(market, "Marketplace Platform") {
+
+    Container_Boundary(edge, "Edge / API Layer") {
+        Container(lb, "Load Balancer", "HAProxy", "Балансировка входящего трафика")
+        Container(gw, "API Gateway", "Kong", "Routing, JWT, Rate Limiting")
+        Container(bff, "Customer BFF", "ASP.NET Core", "Агрегация клиентских API")
+    }
+
+    Container_Boundary(services, "Business Services") {
+        Container(catalog, "Catalog Service", "ASP.NET Core", "Каталог товаров")
+        Container(search, "Search Service", "Go", "Поиск товаров")
+        Container(cart, "Cart Service", "ASP.NET Core", "Корзины покупателей")
+        Container(order, "Order Service", "ASP.NET Core", "Заказы и Saga Orchestration")
+        Container(inventory, "Inventory Service", "Go", "Резервирование остатков")
+        Container(payment, "Payment Service", "ASP.NET Core", "Платежи и возвраты")
+        Container(notify, "Notification Worker", ".NET Worker", "Отправка уведомлений")
+        Container(indexer, "Search Indexer", "Go Worker", "Индексация каталога")
+    }
+
+    Container_Boundary(storage, "Databases / Cache") {
+        ContainerDb(catalogDb, "Catalog DB", "PostgreSQL", "Товары и категории")
+        ContainerDb(orderDb, "Orders DB", "PostgreSQL", "Заказы, Saga State, Outbox")
+        ContainerDb(inventoryDb, "Inventory DB", "PostgreSQL", "Остатки, резервы, Outbox")
+        ContainerDb(paymentDb, "Payments DB", "PostgreSQL", "Платежи, Outbox")
+        ContainerDb(redisCache, "Cache Cluster", "Redis Cluster", "Кэш каталога")
+        ContainerDb(redisCart, "Cart Store", "Redis", "Корзины пользователей")
+        ContainerDb(searchDb, "Search Index", "OpenSearch", "Индексы товаров")
+    }
+
+    Container_Boundary(messaging, "Messaging") {
+        Container(kafka, "Event Bus", "Apache Kafka", "Доменные события")
+        Container(outbox, "Outbox Publishers", "Background Workers", "Доставка событий из Outbox в Kafka")
+    }
+
+    Container_Boundary(ops, "Observability") {
+        Container(otel, "OTel Collector", "OpenTelemetry", "Сбор телеметрии")
+    }
+}
+
+' =========================
+' External traffic
+' =========================
+
+Rel(customer, lb, "API requests", "HTTPS")
+Rel(lb, gw, "Forward requests", "HTTPS")
+Rel(gw, bff, "Client API", "HTTP")
+
+' =========================
+' Client operations
+' =========================
+
+Rel(bff, catalog, "Get products", "REST")
+Rel(bff, search, "Search products", "REST")
+Rel(bff, cart, "Manage cart", "REST")
+Rel(bff, order, "Create / get orders", "REST")
+
+' =========================
+' Databases and cache
+' =========================
+
+Rel(catalog, catalogDb, "Read / Write", "SQL")
+Rel(catalog, redisCache, "Cache-Aside", "RESP")
+
+Rel(cart, redisCart, "Read / Write", "RESP")
+
+Rel(search, searchDb, "Search", "HTTP")
+
+Rel(order, orderDb, "Orders / Saga / Outbox", "SQL")
+Rel(inventory, inventoryDb, "Reservations / Outbox", "SQL")
+Rel(payment, paymentDb, "Payments / Outbox", "SQL")
+
+' =========================
+' Transactional Outbox
+' =========================
+
+Rel(outbox, orderDb, "Read Outbox", "SQL")
+Rel(outbox, inventoryDb, "Read Outbox", "SQL")
+Rel(outbox, paymentDb, "Read Outbox", "SQL")
+Rel(outbox, catalogDb, "Read catalog events", "SQL")
+Rel(outbox, kafka, "Publish events", "Kafka Protocol")
+
+' =========================
+' Event-driven interactions
+' =========================
+
+Rel(kafka, inventory, "Reserve / Release commands", "Kafka")
+Rel(kafka, payment, "Payment commands", "Kafka")
+
+Rel(kafka, order, "Reservation / Payment results", "Kafka")
+Rel(kafka, notify, "Order / Payment events", "Kafka")
+Rel(kafka, indexer, "ProductChanged", "Kafka")
+
+Rel(indexer, searchDb, "Update index", "HTTP")
+
+' =========================
+' External providers
+' =========================
+
+Rel(payment, psp, "Charge / Refund", "HTTPS")
+Rel(notify, msg, "Send notifications", "HTTPS")
+
+' =========================
+' Observability
+' =========================
+
+Rel(order, otel, "Traces / Metrics / Logs", "OTLP")
+Rel(payment, otel, "Traces / Metrics / Logs", "OTLP")
+Rel(inventory, otel, "Traces / Metrics / Logs", "OTLP")
+Rel(catalog, otel, "Traces / Metrics / Logs", "OTLP")
+
+@enduml

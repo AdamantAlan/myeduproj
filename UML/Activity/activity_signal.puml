@@ -1,0 +1,21 @@
+@startuml
+start
+
+:Создать заказ;
+
+:Отправить OrderCreated>
+note right
+  Send Signal Action
+end note
+
+:Продолжить обработку заказа;
+
+:Ожидать PaymentSucceeded<
+note right
+  Accept Event Action
+end note
+
+:Передать заказ на сборку;
+
+stop
+@enduml
